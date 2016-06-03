@@ -43,6 +43,12 @@ app.post('/webhook/', function (req, res) {
             // invokeNLP(sender,text);
             respondToQuery(sender,text);
         }
+
+        if (event.postback) {
+	        let text = JSON.stringify(event.postback)
+	        sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
+	        continue
+	      }
     }
     res.sendStatus(200)
 })
@@ -75,7 +81,7 @@ function sendGenericMessage(sender) {
             "payload": {
                 "template_type": "generic",
                 "elements": [{
-                    "title": "First card",
+                    "title": "Update Details",
                     "subtitle": "Element #1 of an hscroll",
                     "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
                     "buttons": [{
@@ -88,13 +94,13 @@ function sendGenericMessage(sender) {
                         "payload": "Payload for first element in a generic bubble",
                     }],
                 }, {
-                    "title": "Second card",
+                    "title": "Prepaid",
                     "subtitle": "Element #2 of an hscroll",
                     "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
                     "buttons": [{
                         "type": "postback",
-                        "title": "Postback",
-                        "payload": "Payload for second element in a generic bubble",
+                        "title": "Add VAS Pack",
+                        "payload": "Add VAS Pack",
                     }],
                 }]
             }
@@ -115,6 +121,91 @@ function sendGenericMessage(sender) {
             console.log('Error: ', response.body.error)
         }
     })
+}
+
+function greetingMessage(sender){
+
+
+
+	let messageData = {
+        // "attachment": {
+        //     "type": "template",
+        //     "payload": {
+        //         "template_type": "generic",
+        //         "elements": [{
+        //             "title": "Update Details",
+        //             "subtitle": "Element #1 of an hscroll",
+        //             "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
+        //             "buttons": [{
+        //                 "type": "web_url",
+        //                 "url": "https://www.messenger.com",
+        //                 "title": "web url"
+        //             }, {
+        //                 "type": "postback",
+        //                 "title": "Postback",
+        //                 "payload": "Payload for first element in a generic bubble",
+        //             }],
+        //         }, {
+        //             "title": "Prepaid",
+        //             "subtitle": "Element #2 of an hscroll",
+        //             "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
+        //             "buttons": [{
+        //                 "type": "postback",
+        //                 "title": "Add VAS Pack",
+        //                 "payload": "Add VAS Pack",
+        //             }],
+        //         }]
+        //     }
+        // }
+
+        "message":{
+		    "attachment":{
+		      "type":"template",
+		      "payload":{
+		        "template_type":"button",
+		        "text":"Hello!! Please select you request category?",
+		        "buttons":[
+		          {
+		            "type":"web_url",
+		            "url":"https://petersapparel.parseapp.com",
+		            "title":"Show Website"
+		          },
+		          {
+		            "type":"postback",
+		            "title":"Prepaid",
+		            "payload":"Prepaid"
+		          },
+		          {
+		            "type":"postback",
+		            "title":"Postpaid",
+		            "payload":"Postpaid"
+		          },
+		          {
+		            "type":"postback",
+		            "title":"Broadband",
+		            "payload":"Broadband"
+		          }
+		        ]
+		      }
+		    }
+		  }
+    }
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token:token},
+        method: 'POST',
+        json: {
+            recipient: {id:sender},
+            message: messageData,
+        }
+    }, function(error, response, body) {
+        if (error) {
+            console.log('Error sending messages: ', error)
+        } else if (response.body.error) {
+            console.log('Error: ', response.body.error)
+        }
+    })
+
 }
 
 
@@ -147,7 +238,8 @@ request({
 function respondToQuery(sender,text){
 
 	if(text== 'Hi' || text== 'Hello'){
-		sendTextMessage(sender,'How May I Help You?');
+		// sendTextMessage(sender,'How May I Help You?');
+		greetingMessage(sender);
 	} else if (text.indexOf('order')> -1){
 		sendGenericMessage(sender);
 	}
