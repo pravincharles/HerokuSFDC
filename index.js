@@ -123,48 +123,14 @@ function sendGenericMessage(sender) {
     })
 }
 
-function greetingMessage(sender){
-
-
-
-	let messageData = {
-        // "attachment": {
-        //     "type": "template",
-        //     "payload": {
-        //         "template_type": "generic",
-        //         "elements": [{
-        //             "title": "Update Details",
-        //             "subtitle": "Element #1 of an hscroll",
-        //             "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
-        //             "buttons": [{
-        //                 "type": "web_url",
-        //                 "url": "https://www.messenger.com",
-        //                 "title": "web url"
-        //             }, {
-        //                 "type": "postback",
-        //                 "title": "Postback",
-        //                 "payload": "Payload for first element in a generic bubble",
-        //             }],
-        //         }, {
-        //             "title": "Prepaid",
-        //             "subtitle": "Element #2 of an hscroll",
-        //             "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
-        //             "buttons": [{
-        //                 "type": "postback",
-        //                 "title": "Add VAS Pack",
-        //                 "payload": "Add VAS Pack",
-        //             }],
-        //         }]
-        //     }
-        // }
-
-        // "message":{
-		    "attachment":{
-		      "type":"template",
-		      "payload":{
-		        "template_type":"button",
+function greetingMessage(sender) {
+    let messageData = {
+        "attachment": {
+            "type": "template",
+            "payload": {
+                "template_type": "button",
 		        "text":"Hello!! Please select you request category?",
-		        "buttons":[
+                "buttons":[
 		          {
 		            "type":"web_url",
 		            "url":"https://petersapparel.parseapp.com",
@@ -186,9 +152,8 @@ function greetingMessage(sender){
 		            "payload":"Broadband"
 		          }
 		        ]
-		      }
-		    }
-		  // }
+            }
+        }
     }
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -205,7 +170,6 @@ function greetingMessage(sender){
             console.log('Error: ', response.body.error)
         }
     })
-
 }
 
 
@@ -238,8 +202,8 @@ request({
 function respondToQuery(sender,text){
 
 	if(text== 'Hi' || text== 'Hello'){
-		sendTextMessage(sender,'How May I Help You?');
-		// greetingMessage(sender);
+		// sendTextMessage(sender,'How May I Help You?');
+		greetingMessage(sender);
 	} else if (text.indexOf('order')> -1){
 		sendGenericMessage(sender);
 	}
