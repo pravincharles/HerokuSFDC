@@ -40,7 +40,7 @@ app.post('/webhook/', function (req, res) {
         if (event.message && event.message.text) {
             let text = event.message.text
 
-            invokeNLP(sender);
+            invokeNLP(sender,text);
         }
     }
     res.sendStatus(200)
@@ -68,7 +68,7 @@ function sendTextMessage(sender, text) {
 }
 
 
-function invokeNLP(sender){
+function invokeNLP(sender,text){
 
 console.log('invokeNLP');
 
@@ -76,7 +76,7 @@ request({
         url: 'https://hidden-tor-43850.herokuapp.com/nlpdetect',
         method: 'GET',
         headers: {
-        	'input' : 'What is the status of order number 1 hyphen 12345'
+        	'input' : text
         }
     }, function(error, response, body) {
 
