@@ -158,7 +158,7 @@ function greetingMessage(sender){
         //     }
         // }
 
-        "message":{
+        // "message":{
 		    "attachment":{
 		      "type":"template",
 		      "payload":{
@@ -188,7 +188,7 @@ function greetingMessage(sender){
 		        ]
 		      }
 		    }
-		  }
+		  // }
     }
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
