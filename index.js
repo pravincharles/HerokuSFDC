@@ -73,7 +73,7 @@ function invokeNLP(sender){
 console.log('invokeNLP');
 
 request({
-        url: 'https://59.162.104.91:25001/OpenNLPRest/nlpdetect',
+        url: 'https://hidden-tor-43850.herokuapp.com/nlpdetect',
         method: 'GET',
         headers: {
         	'input' : 'What is the status of order number 1 hyphen 12345'
