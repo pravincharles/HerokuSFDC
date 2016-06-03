@@ -238,8 +238,8 @@ request({
 function respondToQuery(sender,text){
 
 	if(text== 'Hi' || text== 'Hello'){
-		// sendTextMessage(sender,'How May I Help You?');
-		greetingMessage(sender);
+		sendTextMessage(sender,'How May I Help You?');
+		// greetingMessage(sender);
 	} else if (text.indexOf('order')> -1){
 		sendGenericMessage(sender);
 	}
