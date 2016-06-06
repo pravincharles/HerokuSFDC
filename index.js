@@ -49,13 +49,13 @@ app.post('/webhook/', function (req, res) {
         if (event.postback) {
 	        let text = JSON.stringify(event.postback);
 	        let payloadData = event.postback.payload;
-	        	sendTextMessage(sender, "You have selected "+text.substring(0, 200), token)
+	        	// sendTextMessage(sender, "You have selected "+text.substring(0, 200), token)
 
 	        if(payloadData == 'BROADBAND_POSTBACK'){
 	        	sendTextMessage(sender, "Please enter your Broadband Customer ID", token)
 
 	        } else if(payloadData == 'PREPAID_POSTBACK'){
-	        	sendTextMessage(sender, "Please enter your MSISDN.", token)
+	        	sendTextMessage(sender, "Please enter your MSISDN", token)
 	        }
 	        continue
 	      }
@@ -141,25 +141,25 @@ function sendButtonEnquiry(sender) {
             "template_type":"generic",
             "elements":[
               {
-                "title":"Welcome to VIVA Bahrain",
-                "image_url":"http://www.viva.com.bh/sites/default/files/viva_responsive_logo.png",
-                "subtitle":"Leaders in Enterprise and Retail Telecom",
+                // "title":"Welcome to VIVA Bahrain",
+                // "image_url":"http://www.viva.com.bh/sites/default/files/viva_responsive_logo.png",
+                // "subtitle":"Leaders in Enterprise and Retail Telecom",
                 "buttons":[
                   {
                     "type":"postback",
-                    "title":"Broadband Customer",
-                    "payload":"BROADBAND_POSTBACK"
+                    "title":"Enquiry",
+                    "payload":"Enquiry_POSTBACK"
                   },
                   {
                     "type":"postback",
-                    "title":"Prepaid Customer",
-                    "payload":"PREPAID_POSTBACK"
-                  },
-                  {
-                    "type":"postback",
-                    "title":"Postpaid Customer",
-                    "payload":"POSTPAID_POSTBACK"
+                    "title":"Add VAS Pack",
+                    "payload":"VAS_POSTBACK"
                   }
+                  // {
+                  //   "type":"postback",
+                  //   "title":"Postpaid Customer",
+                  //   "payload":"POSTPAID_POSTBACK"
+                  // }
                 ]
               }
             ]
