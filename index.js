@@ -37,16 +37,26 @@ app.post('/webhook/', function (req, res) {
     for (let i = 0; i < messaging_events.length; i++) {
         let event = req.body.entry[0].messaging[i]
         let sender = event.sender.id
+        // console.log(event);
         if (event.message && event.message.text) {
             let text = event.message.text
 
             // invokeNLP(sender,text);
-            respondToQuery(sender,text);
+            // respondToQuery(sender,text);
+            sendButtonEnquiry(sender);
         }
 
         if (event.postback) {
-	        let text = JSON.stringify(event.postback)
-	        sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
+	        let text = JSON.stringify(event.postback);
+	        let payloadData = event.postback.payload;
+	        	sendTextMessage(sender, "You have selected "+text.substring(0, 200), token)
+
+	        if(payloadData == 'BROADBAND_POSTBACK'){
+	        	sendTextMessage(sender, "Please enter your Broadband Customer ID", token)
+
+	        } else if(payloadData == 'PREPAID_POSTBACK'){
+	        	sendTextMessage(sender, "Please enter your MSISDN.", token)
+	        }
 	        continue
 	      }
     }
@@ -123,36 +133,37 @@ function sendGenericMessage(sender) {
     })
 }
 
-function greetingMessage(sender) {
+function sendButtonEnquiry(sender) {
     let messageData = {
-        "attachment": {
-            "type": "template",
-            "payload": {
-                "template_type": "button",
-		        "text":"Hello!! Please select you request category?",
+        "attachment":{
+          "type":"template",
+          "payload":{
+            "template_type":"generic",
+            "elements":[
+              {
+                "title":"Welcome to VIVA Bahrain",
+                "image_url":"http://www.viva.com.bh/sites/default/files/viva_responsive_logo.png",
+                "subtitle":"Leaders in Enterprise and Retail Telecom",
                 "buttons":[
-		          {
-		            "type":"web_url",
-		            "url":"https://petersapparel.parseapp.com",
-		            "title":"Show Website"
-		          },
-		          {
-		            "type":"postback",
-		            "title":"Prepaid",
-		            "payload":"Prepaid"
-		          },
-		          {
-		            "type":"postback",
-		            "title":"Postpaid",
-		            "payload":"Postpaid"
-		          },
-		          {
-		            "type":"postback",
-		            "title":"Broadband",
-		            "payload":"Broadband"
-		          }
-		        ]
-            }
+                  {
+                    "type":"postback",
+                    "title":"Broadband Customer",
+                    "payload":"BROADBAND_POSTBACK"
+                  },
+                  {
+                    "type":"postback",
+                    "title":"Prepaid Customer",
+                    "payload":"PREPAID_POSTBACK"
+                  },
+                  {
+                    "type":"postback",
+                    "title":"Postpaid Customer",
+                    "payload":"POSTPAID_POSTBACK"
+                  }
+                ]
+              }
+            ]
+          }
         }
     }
     request({
@@ -202,8 +213,8 @@ request({
 function respondToQuery(sender,text){
 
 	if(text== 'Hi' || text== 'Hello'){
-		// sendTextMessage(sender,'How May I Help You?');
-		greetingMessage(sender);
+		sendTextMessage(sender,'How May I Help You?');
+		// greetingMessage(sender);
 	} else if (text.indexOf('order')> -1){
 		sendGenericMessage(sender);
 	}
