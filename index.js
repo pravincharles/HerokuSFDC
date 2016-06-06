@@ -141,7 +141,7 @@ function sendButtonEnquiry(sender) {
             "template_type":"generic",
             "elements":[
               {
-                // "title":"Welcome to VIVA Bahrain",
+                "title":"Please choose from the following options",
                 // "image_url":"http://www.viva.com.bh/sites/default/files/viva_responsive_logo.png",
                 // "subtitle":"Leaders in Enterprise and Retail Telecom",
                 "buttons":[
