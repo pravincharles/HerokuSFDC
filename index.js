@@ -54,7 +54,7 @@ app.post('/webhook/', function (req, res) {
 	        if(payloadData == 'BROADBAND_POSTBACK'){
 	        	sendTextMessage(sender, "Please enter your Broadband Customer ID", token)
 
-	        } else if(payloadData == 'PREPAID_POSTBACK'){
+	        } else if(payloadData == 'POSTPAID_POSTBACK'){
 	        	sendTextMessage(sender, "Please enter your MSISDN", token)
 	        } else if(payloadData == 'PLANCHANGE_POSTBACK'){
 	        	// sendTextMessage(sender, "Please enter your MSISDN", token)
@@ -201,7 +201,7 @@ function sendButtonEnquiry(sender) {
             "template_type":"generic",
             "elements":[
               {
-                "title":"Prepaid",
+                "title":"Postpaid",
                 "image_url":"http://www.viva.com.bh/sites/default/files/imagecache/1200x460/slider/2012/05/17/1893_1453802299.jpg",
                 "subtitle":"Please choose from the following options",
                 "buttons":[
