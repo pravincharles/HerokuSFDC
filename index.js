@@ -56,9 +56,17 @@ app.post('/webhook/', function (req, res) {
 
 	        } else if(payloadData == 'PREPAID_POSTBACK'){
 	        	sendTextMessage(sender, "Please enter your MSISDN", token)
-	        } else if(payloadData == 'VAS_POSTBACK'){
+	        } else if(payloadData == 'PLANCHANGE_POSTBACK'){
 	        	// sendTextMessage(sender, "Please enter your MSISDN", token)
-	        	sendVASPackOptionsMessage(sender);
+	        	sendPlanOptionsMessage(sender);
+	        } else if(payloadData == 'SUBSCRIBE_SMART_20'){
+	        	sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 20 Plan", token)
+	        } else if(payloadData == 'SUBSCRIBE_SMART_25'){
+	        	sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 25 Plan", token)
+	        } else if(payloadData == 'SUBSCRIBE_SMART_30'){
+	        	sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 30 Plan", token)
+	        } else if(payloadData == 'SUBSCRIBE_PLATINUM_50'){
+	        	sendTextMessage(sender, "Successfully subscribed to Platinum 50 Plan", token)
 	        }
 	        continue
 	      }
@@ -87,35 +95,84 @@ function sendTextMessage(sender, text) {
     })
 }
 
-function sendVASPackOptionsMessage(sender) {
+function sendPlanOptionsMessage(sender) {
     let messageData = {
         "attachment": {
             "type": "template",
             "payload": {
                 "template_type": "generic",
-                "elements": [{
-                    "title": "Update Details",
-                    "subtitle": "Element #1 of an hscroll",
-                    "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
+                "elements": [
+                // {
+                //     "title": "Update Details",
+                //     "subtitle": "Element #1 of an hscroll",
+                //     "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
+                //     "buttons": [{
+                //         "type": "web_url",
+                //         "url": "https://www.messenger.com",
+                //         "title": "web url"
+                //     }, {
+                //         "type": "postback",
+                //         "title": "Postback",
+                //         "payload": "Payload for first element in a generic bubble",
+                //     }],
+                // }, 
+                {
+                    "title": "Unlimited Smart 20",
+                    "subtitle": "Montly Subscriptipn: BD 20",
+                    // "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
                     "buttons": [{
                         "type": "web_url",
-                        "url": "https://www.messenger.com",
-                        "title": "web url"
-                    }, {
+                        "url": "http://www.viva.com.bh/content/viva-unlimited-plans",
+                        "title": "Details"
+                    },{
                         "type": "postback",
-                        "title": "Postback",
-                        "payload": "Payload for first element in a generic bubble",
+                        "title": "Subscribe",
+                        "payload": "SUBSCRIBE_SMART_20",
                     }],
-                }, {
-                    "title": "Prepaid",
-                    "subtitle": "Element #2 of an hscroll",
-                    "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
+                },
+                {
+                    "title": "Unlimited Smart 25",
+                    "subtitle": "Montly Subscriptipn: BD 25",
+                    // "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
                     "buttons": [{
+                        "type": "web_url",
+                        "url": "http://www.viva.com.bh/content/viva-unlimited-plans",
+                        "title": "Details"
+                    },{
                         "type": "postback",
-                        "title": "Add VAS Pack",
-                        "payload": "Add VAS Pack",
+                        "title": "Subscribe",
+                        "payload": "SUBSCRIBE_SMART_25",
                     }],
-                }]
+                },
+                {
+                    "title": "Unlimited Smart 30",
+                    "subtitle": "Montly Subscriptipn: BD 20",
+                    // "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
+                    "buttons": [{
+                        "type": "web_url",
+                        "url": "http://www.viva.com.bh/content/viva-unlimited-plans",
+                        "title": "Details"
+                    },{
+                        "type": "postback",
+                        "title": "Subscribe",
+                        "payload": "SUBSCRIBE_SMART_30",
+                    }],
+                },
+                {
+                    "title": "VIVA Platinum 50",
+                    "subtitle": "Montly Subscriptipn: BD 50",
+                    // "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
+                    "buttons": [{
+                        "type": "web_url",
+                        "url": "http://www.viva.com.bh/content/viva-platinum-50",
+                        "title": "Details"
+                    },{
+                        "type": "postback",
+                        "title": "Subscribe",
+                        "payload": "SUBSCRIBE_PLATINUM_50",
+                    }],
+                }
+                ]
             }
         }
     }
@@ -144,9 +201,9 @@ function sendButtonEnquiry(sender) {
             "template_type":"generic",
             "elements":[
               {
-                "title":"Please choose from the following options",
-                // "image_url":"http://www.viva.com.bh/sites/default/files/viva_responsive_logo.png",
-                // "subtitle":"Leaders in Enterprise and Retail Telecom",
+                "title":"Prepaid",
+                "image_url":"http://www.viva.com.bh/sites/default/files/imagecache/1200x460/slider/2012/05/17/1893_1453802299.jpg",
+                "subtitle":"Please choose from the following options",
                 "buttons":[
                   {
                     "type":"postback",
@@ -157,12 +214,12 @@ function sendButtonEnquiry(sender) {
                     "type":"postback",
                     "title":"Add VAS Pack",
                     "payload":"VAS_POSTBACK"
+                  },
+                  {
+                    "type":"postback",
+                    "title":"Change Plan",
+                    "payload":"PLANCHANGE_POSTBACK"
                   }
-                  // {
-                  //   "type":"postback",
-                  //   "title":"Postpaid Customer",
-                  //   "payload":"POSTPAID_POSTBACK"
-                  // }
                 ]
               }
             ]
