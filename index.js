@@ -56,6 +56,9 @@ app.post('/webhook/', function (req, res) {
 
 	        } else if(payloadData == 'PREPAID_POSTBACK'){
 	        	sendTextMessage(sender, "Please enter your MSISDN", token)
+	        } else if(payloadData == 'VAS_POSTBACK'){
+	        	// sendTextMessage(sender, "Please enter your MSISDN", token)
+	        	sendVASPackOptionsMessage(sender);
 	        }
 	        continue
 	      }
@@ -84,7 +87,7 @@ function sendTextMessage(sender, text) {
     })
 }
 
-function sendGenericMessage(sender) {
+function sendVASPackOptionsMessage(sender) {
     let messageData = {
         "attachment": {
             "type": "template",
