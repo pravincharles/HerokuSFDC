@@ -62,7 +62,7 @@ app.post('/webhook/', function (req, res) {
                         var obj = JSON.parse(returnValue);
                         if(obj.totalSize >0 ){
                             idEnquired = false;
-                            console.log(returnValue);
+                            // console.log(returnValue);
                             
                             var name =  obj.records[0].Name;
                             var id = obj.records[0].Id;
@@ -114,7 +114,7 @@ app.post('/webhook/', function (req, res) {
                                         // console.log(body);
                                         // callback(body);
                                         // sendTextMessage(sender, "Text received, echo: " + response.body)
-                                        console.log(' Line 117. '+body)
+                                        console.log(body)
                                         // var caseObj = JSON.parse(body);
                                         caseId = body.id;
                                         var postText = ' '+name+' Selected Postpaid';
@@ -296,7 +296,7 @@ function fetchAccounts(payloadData,callback){
 
             console.log('response for fetchAccounts received');
             // console.log(response);
-            console.log(body);
+            // console.log(body);
             if (error) {
                 console.log('Error fetchAccounts : ', error)
                 // return error;
@@ -374,7 +374,7 @@ function postChatter(caseid,comment){
 
 
     request({
-            url: "https://ap1.salesforce.com/services/data/v37.0/chatter/feed-elements/"+caseid+"/capabilities/comments/items",
+            url: 'https://ap1.salesforce.com/services/data/v37.0/chatter/feed-elements/'+caseid+'/capabilities/comments/items',
             method: 'POST',
             headers: {
                 'Authorization' : 'Bearer '+access_token,
@@ -394,8 +394,10 @@ function postChatter(caseid,comment){
                 console.log('Error: ', response.body.error);
                 // callback(response.body.error);
                 // return response.body.error;
-            } else {
-                console.log(response.body);
+            } 
+            else {
+                console.log('Chatter Successfully ')
+                // console.log(response.body);
                 // callback(response.body);
                 // sendTextMessage(sender, "Text received, echo: " + response.body)
             }
