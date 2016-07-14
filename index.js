@@ -149,7 +149,7 @@ app.post('/webhook/', function (req, res) {
 	        	// sendTextMessage(sender, "Please enter your MSISDN", token)
 	        	sendPlanOptionsMessage(sender);
 	        }  else if(payloadData == 'SUBSCRIBE_SMART_20'){
-                postChatter(caseId,'Added Product "SUBSCRIBE_SMART_20"');
+                postChatter(caseId,'Successfully subscribed to Unlimited Smart 20 Plan.');
 
                 fetchCaseId(caseId,function(returnValue) {
 
@@ -159,7 +159,7 @@ app.post('/webhook/', function (req, res) {
 	        	  sendTextMessage(sender, "Please use the Service Request Number : "+caseNum+" for future correspondence", token);
                 })
 	        } else if(payloadData == 'SUBSCRIBE_SMART_25'){
-                postChatter(caseId,'Added Product "SUBSCRIBE_SMART_25"');
+                postChatter(caseId,'Successfully subscribed to Unlimited Smart 25 Plan.');
                 fetchCaseId(caseId,function(returnValue) {
 
                 var obj = JSON.parse(returnValue);
@@ -168,7 +168,7 @@ app.post('/webhook/', function (req, res) {
                   sendTextMessage(sender, "Please use the Service Request Number : "+caseNum+" for future correspondence", token);
                 })
 	        } else if(payloadData == 'SUBSCRIBE_SMART_30'){
-                postChatter(caseId,'Added Product "SUBSCRIBE_SMART_30"');
+                postChatter(caseId,'Successfully subscribed to Unlimited Smart 30 Plan.');
                 fetchCaseId(caseId,function(returnValue) {
 
                     var obj = JSON.parse(returnValue);
@@ -177,13 +177,13 @@ app.post('/webhook/', function (req, res) {
                   sendTextMessage(sender, "Please use the Service Request Number : "+caseNum+" for future correspondence", token);
                 })
 	        } else if(payloadData == 'SUBSCRIBE_PLATINUM_50'){
-                postChatter(caseId,'Added Product "SUBSCRIBE_PLATINUM_50"');
+                postChatter(caseId,'Successfully subscribed to Platinum 50 Plan');
                 fetchCaseId(caseId,function(returnValue) {
 
                     var obj = JSON.parse(returnValue);
                     var caseNum =  obj.records[0].CaseNumber;
                     sendTextMessage(sender, "Successfully subscribed to Platinum 50 Plan", token)
-                  sendTextMessage(sender, "Please use the Service Request Number : "+caseNum+" for future correspondence", token);
+                    sendTextMessage(sender, "Please use the Service Request Number : "+caseNum+" for future correspondence", token);
                 })
 	        } 
 	        continue
