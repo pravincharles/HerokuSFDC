@@ -150,16 +150,41 @@ app.post('/webhook/', function (req, res) {
 	        	sendPlanOptionsMessage(sender);
 	        }  else if(payloadData == 'SUBSCRIBE_SMART_20'){
                 postChatter(caseId,'Added Product "SUBSCRIBE_SMART_20"');
-	        	sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 20 Plan", token)
+
+                fetchCaseId(text,function(returnValue) {
+
+                    var obj = JSON.parse(returnValue);
+                    var caseNum =  obj.records[0].CaseNumber;
+                  sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 20 Plan.", token)
+	        	  sendTextMessage(sender, "Please use the Service Request Number : "+caseNum+" for future correspondence", token);
+                })
 	        } else if(payloadData == 'SUBSCRIBE_SMART_25'){
                 postChatter(caseId,'Added Product "SUBSCRIBE_SMART_25"');
-	        	sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 25 Plan", token)
+                fetchCaseId(text,function(returnValue) {
+
+                    var obj = JSON.parse(returnValue);
+                    var caseNum =  obj.records[0].CaseNumber;
+                  sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 25 Plan.", token)
+                  sendTextMessage(sender, "Please use the Service Request Number : "+caseNum+" for future correspondence", token);
+                })
 	        } else if(payloadData == 'SUBSCRIBE_SMART_30'){
                 postChatter(caseId,'Added Product "SUBSCRIBE_SMART_30"');
-	        	sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 30 Plan", token)
+                fetchCaseId(text,function(returnValue) {
+
+                    var obj = JSON.parse(returnValue);
+                    var caseNum =  obj.records[0].CaseNumber;
+                  sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 30 Plan.", token)
+                  sendTextMessage(sender, "Please use the Service Request Number : "+caseNum+" for future correspondence", token);
+                })
 	        } else if(payloadData == 'SUBSCRIBE_PLATINUM_50'){
                 postChatter(caseId,'Added Product "SUBSCRIBE_PLATINUM_50"');
-	        	sendTextMessage(sender, "Successfully subscribed to Platinum 50 Plan", token)
+                fetchCaseId(text,function(returnValue) {
+
+                    var obj = JSON.parse(returnValue);
+                    var caseNum =  obj.records[0].CaseNumber;
+                    sendTextMessage(sender, "Successfully subscribed to Platinum 50 Plan", token)
+                  sendTextMessage(sender, "Please use the Service Request Number : "+caseNum+" for future correspondence", token);
+                })
 	        } 
 	        continue
 	      }
@@ -310,6 +335,34 @@ function fetchAccounts(payloadData,callback){
                 console.log('Error: ', response.body.error);
                 callback(response.body.error);
                 // return response.body.error;
+            } else {
+                console.log(response.body);
+                callback(response.body);
+                // sendTextMessage(sender, "Text received, echo: " + response.body)
+            }
+        })
+}
+
+function fetchCaseId(caseid,callback){
+
+    console.log('fetchCaseId');
+
+    request({
+            url: "https://ap1.salesforce.com/services/data/v20.0/query/?q=SELECT id,casenumber from Case+WHERE+id+=+'"+caseid+"'",
+            method: 'GET',
+            headers: {
+                'Authorization' : 'Bearer '+access_token,
+                'Content-Type'  : 'application/json'
+            }
+        }, function(error, response, body) {
+
+            console.log('response for fetchCaseId received');
+            if (error) {
+                console.log('Error fetchCaseId : ', error)
+                callback(error);
+            } else if (response.body.error) {
+                console.log('Error: ', response.body.error);
+                callback(response.body.error);
             } else {
                 console.log(response.body);
                 callback(response.body);
