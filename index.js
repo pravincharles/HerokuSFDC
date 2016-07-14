@@ -362,7 +362,7 @@ function postChatter(caseid,comment){
     console.log('postChatter');
 
     request({
-            url: 'https://ap1.salesforce.com/services/data/v37.0/chatter/feeds/record/'+caseid+'/feed-elements'
+            url: 'https://ap1.salesforce.com/services/data/v37.0/chatter/feeds/record/'+caseid+'/feed-elements',
             // url: 'https://ap1.salesforce.com/services/data/v37.0/chatter/feed-elements/'+caseid+'/capabilities/comments/items',
             method: 'GET',
             headers: {
