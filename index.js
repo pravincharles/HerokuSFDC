@@ -51,7 +51,20 @@ app.post('/webhook/', function (req, res) {
 
             // invokeNLP(sender,text);
             // respondToQuery(sender,text);
-            sendButtonEnquiry(sender);
+
+            if (!isNaN(text)){
+                if(idEnquired){
+
+                    fetchAccounts(payloadData,function(returnValue) {
+                        idEnquired = false;
+                        let name =  returnValue.record[0].Name;
+                        // res.send("Hi "+returnValue.record[0].Name);
+                        console.log(name);
+                        sendButtonEnquiry(name,sender);
+                    });
+
+                }
+            }
         }
 
         if (event.postback) {
@@ -68,11 +81,7 @@ app.post('/webhook/', function (req, res) {
 	        } else if(payloadData == 'PLANCHANGE_POSTBACK'){
 	        	// sendTextMessage(sender, "Please enter your MSISDN", token)
 	        	sendPlanOptionsMessage(sender);
-	        } else if (!isNaN(payloadData)){
-                if(idEnquired){
-
-                }
-            } else if(payloadData == 'SUBSCRIBE_SMART_20'){
+	        }  else if(payloadData == 'SUBSCRIBE_SMART_20'){
 	        	sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 20 Plan", token)
 	        } else if(payloadData == 'SUBSCRIBE_SMART_25'){
 	        	sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 25 Plan", token)
@@ -206,12 +215,12 @@ function sendPlanOptionsMessage(sender) {
     })
 }
 
-function fetchAccounts(callback){
+function fetchAccounts(payloadData,callback){
 
     console.log('fetchAccounts');
 
     request({
-            url: 'https://ap1.salesforce.com/services/data/v20.0/query/?q=SELECT id,name,accountnumber from Account',
+            url: 'https://ap1.salesforce.com/services/data/v20.0/query/?q=SELECT id,name,accountnumber from Account+WHERE+accountnumber+=+"'+payloadData+'"',
             method: 'GET',
             headers: {
                 'Authorization' : 'Bearer 00D90000000w7KR!AR0AQEsz2S3bKib1bV76cOFYyHV4oVDNeXPBOX1sc0c6_PLgazaPmt63gXpDGinYaskd3kk46l1nKTJmqryC4QZ3ZmNwvXeP',
@@ -238,7 +247,7 @@ function fetchAccounts(callback){
         })
 }
 
-function sendButtonEnquiry(sender) {
+function sendButtonEnquiry(name,sender) {
     let messageData = {
         "attachment":{
           "type":"template",
@@ -248,7 +257,7 @@ function sendButtonEnquiry(sender) {
               {
                 "title":"Postpaid",
                 "image_url":"http://www.viva.com.bh/sites/default/files/imagecache/1200x460/slider/2012/05/17/1893_1453802299.jpg",
-                "subtitle":"Please choose from the following options",
+                "subtitle":"Hi "+name+"!!! Please choose from the following options",
                 "buttons":[
                   {
                     "type":"postback",
