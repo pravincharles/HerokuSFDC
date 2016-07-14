@@ -220,7 +220,7 @@ function fetchAccounts(payloadData,callback){
     console.log('fetchAccounts');
 
     request({
-            url: 'https://ap1.salesforce.com/services/data/v20.0/query/?q=SELECT id,name,accountnumber from Account+WHERE+accountnumber+=+"'+payloadData+'"',
+            url: "https://ap1.salesforce.com/services/data/v20.0/query/?q=SELECT id,name,accountnumber from Account+WHERE+accountnumber+=+'"+payloadData+"'",
             method: 'GET',
             headers: {
                 'Authorization' : 'Bearer 00D90000000w7KR!AR0AQEsz2S3bKib1bV76cOFYyHV4oVDNeXPBOX1sc0c6_PLgazaPmt63gXpDGinYaskd3kk46l1nKTJmqryC4QZ3ZmNwvXeP',
