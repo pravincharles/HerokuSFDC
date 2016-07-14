@@ -1,0 +1,1089 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Copyright RightNow Technologies, Inc.  2009-2010
+    http://www.rightnow.com
+-->
+
+<wsdl:definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+        targetNamespace="urn:wsdl.enduser.chat.ws.rightnow.com/v1"
+        xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+        xmlns:rncft="urn:faults.chat.ws.rightnow.com/v1"
+        xmlns:rnccm="urn:messages.common.chat.ws.rightnow.com/v1"
+        xmlns:rnceum="urn:messages.enduser.chat.ws.rightnow.com/v1" 
+        xmlns:rnceuws="urn:wsdl.enduser.chat.ws.rightnow.com/v1"
+        name="RightNow_Chat_Enduser_API"> 
+
+    <wsdl:documentation>version 1.0</wsdl:documentation>
+
+	<wsp:Policy xmlns:sp='http://schemas.xmlsoap.org/ws/2005/07/securitypolicy' xmlns:wsu='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd' wsu:Id='SyncPolicy' xmlns:wsp='http://schemas.xmlsoap.org/ws/2004/09/policy'>
+	  <wsp:ExactlyOne>
+	    <wsp:All>
+	
+	      <sp:TransportBinding>
+	        <wsp:Policy>
+	          <wsp:ExactlyOne>
+	            <wsp:All>
+	
+	              <sp:TransportToken>
+	                <wsp:Policy>
+	                  <wsp:ExactlyOne>
+	                    <sp:HttpsToken />
+	                  </wsp:ExactlyOne>
+	                </wsp:Policy>
+	              </sp:TransportToken>
+	
+	              <sp:AlgorithmSuite>
+	                <wsp:Policy>
+	                  <sp:Basic256 />
+	                </wsp:Policy>
+	              </sp:AlgorithmSuite>
+	
+	              <sp:Layout>
+	                <wsp:Policy>
+	                  <wsp:ExactlyOne>
+	                    <sp:Lax />
+	                  </wsp:ExactlyOne>
+	                </wsp:Policy>
+	              </sp:Layout>
+	
+	            </wsp:All>
+	          </wsp:ExactlyOne>
+	        </wsp:Policy>
+	      </sp:TransportBinding>
+	
+	      <wsp:ExactlyOne>
+	
+	        <!-- Begin SignedSupportingTokens -->
+	
+	        <sp:SignedSupportingTokens>
+	          <wsp:Policy>
+	            <wsp:ExactlyOne>
+	              <sp:UsernameToken sp:IncludeToken='http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient'>
+	                <wsp:Policy>
+	                  <wsp:ExactlyOne>
+	                    <sp:WssUsernameToken10 />
+	                  </wsp:ExactlyOne>
+	                </wsp:Policy>
+	              </sp:UsernameToken>
+	            </wsp:ExactlyOne>
+	          </wsp:Policy>
+	        </sp:SignedSupportingTokens>
+	
+	        <!-- End SignedSupportingTokens -->
+	
+	        <!-- Begin SupportingTokens -->
+	
+	        <sp:SupportingTokens>
+	          <wsp:Policy>
+	            <wsp:ExactlyOne>
+	              <sp:UsernameToken sp:IncludeToken='http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient'>
+	                <wsp:Policy>
+	                  <wsp:ExactlyOne>
+	                    <sp:WssUsernameToken10 />
+	                  </wsp:ExactlyOne>
+	                </wsp:Policy>
+	              </sp:UsernameToken>
+	            </wsp:ExactlyOne>
+	          </wsp:Policy>
+	        </sp:SupportingTokens>
+	
+	        <!-- End SupportingTokens -->
+	
+	      </wsp:ExactlyOne>
+	
+	    </wsp:All>
+	  </wsp:ExactlyOne>
+	</wsp:Policy>
+
+    <wsdl:types>
+		<xs:schema xmlns="urn:messages.enduser.chat.ws.rightnow.com/v1" 
+		           targetNamespace="urn:messages.enduser.chat.ws.rightnow.com/v1" 
+		           elementFormDefault="qualified" attributeFormDefault="unqualified">
+		        
+		<xs:import namespace="urn:messages.common.chat.ws.rightnow.com/v1"/>
+		
+		    <!--  ============================================ -->
+		    <!--    Create Engagement Resume Type enumeration  -->
+		    <!--  ============================================ -->
+		    <xs:simpleType name="ChatCreateEngagementResumeEnum">
+		        <xs:restriction base="xs:string">
+		            <xs:enumeration value="RESUME"/>
+		            <xs:enumeration value="DO_NOT_RESUME"/>
+		          </xs:restriction>
+		    </xs:simpleType>
+		    
+		    <!--  =================================== -->
+		    <!--    End User API base request type    -->
+		    <!--  =================================== -->
+		    <xs:complexType name="TransactionRequest">
+		        <xs:sequence>
+		            <xs:element name="ClientRequestTime" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="ClientTransactionID" type="xs:unsignedLong" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="SiteName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		
+		    
+		    <!--  ================================================= -->
+		    <!--    Request type for the request chat API method    -->
+		    <!--  ================================================= -->
+		    <xs:element name="RequestChat" type="rnceum:RequestChatMsg"/>
+		    <xs:complexType name="RequestChatMsg">
+		        <xs:sequence>
+		            <xs:element name="TransactionRequestData" type="TransactionRequest" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="CustomFields" type="rnccm:GenericField" minOccurs="0" maxOccurs="unbounded"/>
+		            <xs:element name="CustomerInformation" type="rnccm:ChatCustomerInformation" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="ResumeType" type="rnceum:ChatCreateEngagementResumeEnum" nillable="true" minOccurs="0" maxOccurs="1" />
+		            <xs:element name="ChatSessionToken" type="xs:string" minOccurs="1" maxOccurs="1" />
+		            <xs:element name="IncidentID" type="rnccm:ID" minOccurs="0" maxOccurs="1" />
+		        </xs:sequence>
+		    </xs:complexType>
+		    
+		    <!--  =================================================== -->
+		    <!--    Request type for the terminate chat API method    -->
+		    <!--  =================================================== -->
+		    <xs:element name="TerminateChat" type="rnceum:TerminateChatMsg"/>
+		    <xs:complexType name="TerminateChatMsg">
+		        <xs:sequence>
+		            <xs:element name="TransactionRequestData" type="TransactionRequest" minOccurs="1" maxOccurs="1"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		    
+		    <!--  ====================================================== -->
+		    <!--    Request type for the post chat message API method    -->
+		    <!--  ====================================================== -->
+		    <xs:element name="PostChatMessage" type="rnceum:PostChatMessageMsg"/>
+		    <xs:complexType name="PostChatMessageMsg">
+		        <xs:sequence>
+		            <xs:element name="TransactionRequestData" type="TransactionRequest" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="Body" type="xs:string" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="OffTheRecord" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		
+		    <!--  ============================================================== -->
+		    <!--    Request type for the send activity signal chat API method    -->
+		    <!--  ============================================================== -->
+		    <xs:element name="SendActivityChange" type="rnceum:SendActivityChangeMsg"/>
+		    <xs:complexType name="SendActivityChangeMsg">
+		        <xs:sequence>
+		            <xs:element name="TransactionRequestData" type="TransactionRequest" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="Mode" type="rnccm:ChatInteractionModeEnum"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		    
+		    <!--  =========================================================== -->
+		    <!--    Request type for the retrieve messages chat API method    -->
+		    <!--  =========================================================== -->
+		    <xs:element name="RetrieveMessages" type="rnceum:RetrieveMessagesMsg"/>
+		    <xs:complexType name="RetrieveMessagesMsg">
+		        <xs:sequence>
+		            <xs:element name="TransactionRequestData" type="TransactionRequest" minOccurs="1" maxOccurs="1"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		    
+		</xs:schema>
+
+
+		
+		<xs:schema xmlns="urn:messages.enduser.chat.ws.rightnow.com/v1" 
+		           targetNamespace="urn:messages.enduser.chat.ws.rightnow.com/v1" 
+		           elementFormDefault="qualified" attributeFormDefault="unqualified">
+		           
+		<xs:import namespace="urn:messages.common.chat.ws.rightnow.com/v1"/>
+		
+		    <!--  =================================== -->
+		    <!--    Request Chat Result  enumeration  -->
+		    <!--  =================================== -->
+		    <xs:simpleType name="RequestChatResultEnum">
+		        <xs:restriction base="xs:string">
+		            <xs:enumeration value="SUCCESS"/>
+		            <xs:enumeration value="FAIL_NO_AGENTS_AVAIL"/>
+		            <xs:enumeration value="FAIL_OUT_OF_HOURS"/>
+		            <xs:enumeration value="FAIL_HOLIDAY"/>
+		            <xs:enumeration value="FAIL_SERVER_ERROR"/>
+		            <xs:enumeration value="FAIL_RULE_DEQUEUE"/>
+		            <xs:enumeration value="EXISTING_SESSION"/>
+		            <xs:enumeration value="FAIL_UNAUTHORIZED"/>
+		        </xs:restriction>
+		    </xs:simpleType>
+		
+		    <!--  =============================== -->
+		    <!--    Chat Activity Signal Message  -->
+		    <!--  =============================== -->
+		    <xs:complexType name="RNChatActivityChangedMessage">
+		        <xs:complexContent>
+		            <xs:extension base="rnccm:RNChatBaseSystemMessage">
+		                <xs:sequence>
+		                    <xs:element name="ClientID" type="xs:unsignedLong" minOccurs="1" maxOccurs="1"/>
+		                    <xs:element name="Mode" type="rnccm:ChatInteractionModeEnum" minOccurs="1" maxOccurs="1"/>
+		                </xs:sequence>
+		            </xs:extension>
+		        </xs:complexContent>
+		    </xs:complexType>
+		
+		    <!--  ============================= -->
+		    <!--    Chat Disconnected Message   -->
+		    <!--  ============================= -->
+		    <xs:complexType name="RNChatConcludedMessage">
+		        <xs:complexContent>
+		            <xs:extension base="rnccm:RNChatBaseSystemMessage">
+		                <xs:sequence>
+		                    <xs:element name="Reason" type="rnccm:ChatConcludedReasonEnum" minOccurs="1" maxOccurs="1"/>
+		                </xs:sequence>
+		            </xs:extension>
+		        </xs:complexContent>
+		    </xs:complexType>
+		
+		    <!--  ================================== -->
+		    <!--    Chat Participant Added Message   -->
+		    <!--  ================================== -->
+		    <xs:complexType name="RNChatParticipantAddedMessage">
+		        <xs:complexContent>
+		            <xs:extension base="rnccm:RNChatBaseSystemMessage">
+		                <xs:sequence>
+		                    <xs:element name="Name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+		                    <xs:element name="Greeting" type="xs:string" minOccurs="1" maxOccurs="1"/>
+		                    <xs:element name="ClientID" type="xs:unsignedLong" minOccurs="1" maxOccurs="1"/>
+		                    <xs:element name="Role" type="rnccm:ChatEngagementRoleEnum" minOccurs="1" maxOccurs="1"/>
+		                </xs:sequence>
+		            </xs:extension>
+		        </xs:complexContent>
+		    </xs:complexType>
+		
+		    <!--  ================================== -->
+		    <!--    Chat Participant Left Message   -->
+		    <!--  ================================== -->
+		    <xs:complexType name="RNChatParticipantLeftMessage">
+		        <xs:complexContent>
+		            <xs:extension base="rnccm:RNChatBaseSystemMessage">
+		                <xs:sequence>
+		                    <xs:element name="ClientID" type="xs:unsignedLong" minOccurs="1" maxOccurs="1"/>
+		                </xs:sequence>
+		            </xs:extension>
+		        </xs:complexContent>
+		    </xs:complexType>
+		
+		    <!--  ======================== -->
+		    <!--    Chat Updated Message   -->
+		    <!--  ======================== -->
+		    <xs:complexType name="RNChatParticipantConnectionStateChangedMessage">
+		        <xs:complexContent>
+		            <xs:extension base="rnccm:RNChatBaseSystemMessage">
+		                <xs:sequence>
+		                    <xs:element name="ClientID" type="xs:unsignedLong" minOccurs="1" maxOccurs="1"/>
+		                    <xs:element name="Role" type="rnccm:ChatEngagementRoleEnum" minOccurs="1" maxOccurs="1"/>
+		                    <xs:element name="ConnectionState" type="rnccm:ChatParticipantConnectionStateEnum" minOccurs="1" maxOccurs="1"/>
+		                </xs:sequence>
+		            </xs:extension>
+		        </xs:complexContent>
+		    </xs:complexType>
+		
+		    <!--  ========================================= -->
+		    <!--    Chat Wait Information Changed Message   -->
+		    <!--  ========================================= -->
+		    <xs:complexType name="RNChatWaitInformationChangedMessage">
+		        <xs:complexContent>
+		            <xs:extension base="rnccm:RNChatBaseSystemMessage">
+		                <xs:sequence>
+		                    <xs:element name="Position" type="xs:long" minOccurs="1" maxOccurs="1"/>
+		                    <xs:element name="ExpectedWaitTimeSeconds" type="xs:long" minOccurs="1" maxOccurs="1"/>
+		                    <xs:element name="AverageWaitTimeSeconds" type="xs:long" minOccurs="1" maxOccurs="1"/>
+		                </xs:sequence>
+		            </xs:extension>
+		        </xs:complexContent>
+		    </xs:complexType>
+		
+		    <!--  ================================ -->
+		    <!--    Chat Message Posted Message    -->
+		    <!--  ================================ -->
+		    <xs:complexType name="RNChatMessagePostedMessage">
+		        <xs:complexContent>
+		            <xs:extension base="rnccm:RNChatBaseSystemMessage">
+		                <xs:sequence>
+		                    <xs:element name="Body" type="xs:string" minOccurs="1" maxOccurs="1"/>
+		                    <xs:element name="ClientID" type="xs:unsignedLong" minOccurs="1" maxOccurs="1"/>
+		                </xs:sequence>
+		            </xs:extension>
+		        </xs:complexContent>
+		    </xs:complexType>
+		
+		    <!--  ============================== -->
+		    <!--    Chat Role Changed Message    -->
+		    <!--  ============================== -->
+		    <xs:complexType name="RNChatRoleChangedMessage">
+		        <xs:complexContent>
+		            <xs:extension base="rnccm:RNChatBaseSystemMessage">
+		                <xs:sequence>
+		                    <xs:element name="LeadClientID" type="xs:unsignedLong" minOccurs="1" maxOccurs="1"/>
+		                </xs:sequence>
+		            </xs:extension>
+		        </xs:complexContent>
+		    </xs:complexType>
+		
+		    <!--  ========================================= -->
+		    <!--    Chat End User Error Occurred Message    -->
+		    <!--  ========================================= -->
+		    <xs:complexType name="RNChatEndUserErrorOccurredMessage">
+		        <xs:complexContent>
+		            <xs:extension base="rnccm:RNChatErrorOccurredMessage">
+		                <xs:sequence>
+		                    <xs:element name="ErrorType" type="xs:string" minOccurs="1" maxOccurs="1"/>
+		                </xs:sequence>
+		            </xs:extension>
+		        </xs:complexContent>
+		    </xs:complexType>
+		
+		    <!--  ========================================= -->
+		    <!--    Chat Error Occurred Message Container   -->
+		    <!--  ========================================= -->
+			<xs:complexType name="RNChatEndUserErrorOccurredContainer">
+				<xs:sequence>
+					<xs:element name="RNErrorMessages" type="rnceum:RNChatEndUserErrorOccurredMessage" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>
+		
+		    <!--  =================================== -->
+		    <!--    End User API base response type   -->
+		    <!--  =================================== -->
+		    <xs:complexType name="TransactionResponse">
+		        <xs:sequence>
+		            <xs:element name="ClientRequestTime" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="ServiceStartTime" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="ServiceFinishTime" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="ClientID" type="xs:unsignedLong" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="ClientTransactionID" type="xs:unsignedLong" minOccurs="1" maxOccurs="1"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		
+		    <!--  ================================================= -->
+		    <!--    Response type for the request chat API method   -->
+		    <!--  ================================================= -->
+		    <xs:element name="RequestChatResponse" type="rnceum:RequestChatResponseMsg"/>
+		    <xs:complexType name="RequestChatResponseMsg">
+		        <xs:sequence>
+		            <xs:element name="TransactionResponseData" type="TransactionResponse" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="EngagementID" type="rnccm:ID" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="CancelledSurveyID" type="rnccm:ID" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="CompletedSurveyID" type="rnccm:ID" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="ResultType" type="rnceum:RequestChatResultEnum" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="SessionID" type="xs:string" minOccurs="1" maxOccurs="1"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		
+		    <!--  =================================================== -->
+		    <!--    Response type for the terminate chat API method   -->
+		    <!--  =================================================== -->
+		    <xs:element name="TerminateChatResponse" type="rnceum:TerminateChatResponseMsg"/>
+		    <xs:complexType name="TerminateChatResponseMsg">
+		        <xs:sequence>
+		            <xs:element name="TransactionResponseData" type="TransactionResponse" minOccurs="1" maxOccurs="1"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		
+		    <!--  ===================================================== -->
+		    <!--    Response type for the post chat messageAPI method   -->
+		    <!--  ===================================================== -->
+		    <xs:element name="PostChatMessageResponse" type="rnceum:PostChatMessageResponseMsg"/>
+		    <xs:complexType name="PostChatMessageResponseMsg">
+		        <xs:sequence>
+		            <xs:element name="TransactionResponseData" type="TransactionResponse" minOccurs="1" maxOccurs="1"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		
+		    <!--  =============================================================== -->
+		    <!--    Response type for the send activity signal chat API method    -->
+		    <!--  =============================================================== -->
+		    <xs:element name="SendActivityChangeResponse" type="rnceum:SendActivityChangeResponseMsg"/>
+		    <xs:complexType name="SendActivityChangeResponseMsg">
+		        <xs:sequence>
+		            <xs:element name="TransactionResponseData" type="TransactionResponse" minOccurs="1" maxOccurs="1"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		   
+		    <xs:complexType name="SystemMessagePart">
+		        <xs:sequence>
+		            <xs:choice id="SystemMessage" minOccurs="0" maxOccurs="unbounded">
+		                <xs:element name="RNChatActivityChangedMessage" type="rnceum:RNChatActivityChangedMessage"/>
+		                <xs:element name="RNChatConcludedMessage" type="rnceum:RNChatConcludedMessage"/>
+		                <xs:element name="RNChatParticipantAddedMessage" type="rnceum:RNChatParticipantAddedMessage"/>
+		                <xs:element name="RNChatParticipantLeftMessage" type="rnceum:RNChatParticipantLeftMessage"/>
+		                <xs:element name="RNChatParticipantConnectionStateChangedMessage" type="rnceum:RNChatParticipantConnectionStateChangedMessage"/>
+		                <xs:element name="RNChatMessagePostedMessage" type="rnceum:RNChatMessagePostedMessage"/>
+		                <xs:element name="RNChatWaitInformationChangedMessage" type="rnceum:RNChatWaitInformationChangedMessage"/>
+		                <xs:element name="RNChatRoleChangedMessage" type="rnceum:RNChatRoleChangedMessage"/>
+		                <xs:element name="RNChatConfigurationChangedMessage" type="rnccm:RNChatConfigurationChangedMessage"/>
+		            </xs:choice>
+		        </xs:sequence>
+		    </xs:complexType>
+		        
+		    <!--  ============================================================= -->
+		    <!--    Response type for the get system messages chat API method   -->
+		    <!--  ============================================================= -->
+		    <xs:element name="RetrieveMessagesResponse" type="rnceum:RetrieveMessagesResponseMsg"/>
+		    <xs:complexType name="RetrieveMessagesResponseMsg">
+		        <xs:sequence>
+		            <xs:element name="TransactionResponseData" type="TransactionResponse" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="RNChatErrorEndUserOccurredMessageContainer" type="rnceum:RNChatEndUserErrorOccurredContainer" minOccurs="0" maxOccurs="1"/>
+		            <xs:element name="SystemMessages" type="rnceum:SystemMessagePart" minOccurs="0" maxOccurs="1"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		    
+		</xs:schema>
+
+
+		<xs:schema xmlns="urn:messages.common.chat.ws.rightnow.com/v1" 
+		           targetNamespace="urn:messages.common.chat.ws.rightnow.com/v1" 
+		           elementFormDefault="qualified" attributeFormDefault="unqualified">
+		
+		           
+		    <!--  ================================ -->
+		    <!--    Mandatory Client Info Header   -->
+		    <!--  ================================ -->
+								  
+		    <xs:complexType name="ClientInfoHeader">
+		        <xs:sequence>
+		            <xs:element name="AppID" type="xs:string" />
+		        </xs:sequence>
+		    </xs:complexType>
+		
+		    <!--  =========================== -->
+		    <!--    Chat Client Info Header   -->
+		    <!--  =========================== -->
+		    <xs:element name="ChatClientInfoHeader">
+		        <xs:complexType>
+		            <xs:complexContent>
+		                <xs:extension base="rnccm:ClientInfoHeader">
+		                    <xs:sequence>
+		                        <xs:element name="SessionID" type="xs:string" minOccurs="0" maxOccurs="1"/>
+		                    </xs:sequence>
+		                </xs:extension>
+		            </xs:complexContent>
+		        </xs:complexType>
+		    </xs:element>
+		
+		    <xs:simpleType name="RNChatConfigurationChangedEnum">
+		        <xs:restriction base="xs:string">
+		            <xs:enumeration value="SERVER_END_POINT_CHANGE"/>
+		        </xs:restriction>
+		    </xs:simpleType>
+		
+		    <!--  ============================= -->
+		    <!--    Chat Concluded Reason Type  -->
+		    <!--  ============================= -->
+		
+		    <xs:simpleType name="ChatConcludedReasonEnum">
+		        <xs:restriction base="xs:string">
+		            <xs:enumeration value="AGENT_CONCLUDED"/>
+		            <xs:enumeration value="END_USER_CONCLUDED"/>
+		            <xs:enumeration value="QUEUE_TIMEOUT"/>
+		            <xs:enumeration value="IDLE_TIMEOUT"/>
+		            <xs:enumeration value="EJECTED"/>
+		            <xs:enumeration value="NO_AGENTS_AVAILABLE"/>
+		            <xs:enumeration value="UNKNOWN"/>
+		        </xs:restriction>
+		    </xs:simpleType>
+		
+		    <!--  ====================================  -->
+		    <!--    Chat Interaction Mode enumeration   -->
+		    <!--  ====================================  -->
+		
+		    <xs:simpleType name="ChatInteractionModeEnum">
+		        <xs:restriction base="xs:string">
+		            <xs:enumeration value="LISTENING"/>
+		            <xs:enumeration value="RESPONDING"/>
+		        </xs:restriction>
+		    </xs:simpleType>
+		
+		    <!--  =================================== -->
+		    <!--    Chat Engagement Role enumeration  -->
+		    <!--  =================================== -->
+		
+		    <xs:simpleType name="ChatEngagementRoleEnum">
+		        <xs:restriction base="xs:string">
+		            <xs:enumeration value="END_USER"/>
+		            <xs:enumeration value="CONFEREE"/>
+		            <xs:enumeration value="LEAD"/>
+		            <xs:enumeration value="MONITOR"/>
+		            <xs:enumeration value="TRANSIENT"/>
+		        </xs:restriction>
+		    </xs:simpleType>
+		
+		    <!--  ================================================ -->
+		    <!--    Chat Participant Connection State enumeration  -->
+		    <!--  ================================================ -->
+		
+		    <xs:simpleType name="ChatParticipantConnectionStateEnum">
+		        <xs:restriction base="xs:string">
+		            <xs:enumeration value="ABSENT"/>
+		            <xs:enumeration value="ACTIVE"/>
+		            <xs:enumeration value="DISCONNECTED"/>
+		        </xs:restriction>
+		    </xs:simpleType>
+		
+			<xs:simpleType name="ActionEnum">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="none"/>
+					<xs:enumeration value="add"/>
+					<xs:enumeration value="remove"/>
+					<xs:enumeration value="update"/>
+				</xs:restriction>
+			</xs:simpleType>
+		
+			<xs:simpleType name="DataTypeEnum">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="BASE64_BINARY"/>
+					<xs:enumeration value="BOOLEAN"/>
+					<xs:enumeration value="BOOLEAN_LIST"/>
+					<xs:enumeration value="DATE"/>
+					<xs:enumeration value="DATE_LIST"/>
+					<xs:enumeration value="DATETIME"/>
+					<xs:enumeration value="DATETIME_LIST"/>
+					<xs:enumeration value="DECIMAL"/>
+					<xs:enumeration value="DECIMAL_LIST"/>
+					<xs:enumeration value="ID"/>
+					<xs:enumeration value="ID_LIST"/>
+					<xs:enumeration value="INTEGER"/>
+					<xs:enumeration value="INTEGER_LIST"/>
+					<xs:enumeration value="LONG"/>
+					<xs:enumeration value="LONG_LIST"/>
+					<xs:enumeration value="NAMED_ID"/>
+					<xs:enumeration value="NAMED_ID_DELTA_LIST"/>
+					<xs:enumeration value="NAMED_ID_LIST"/>
+					<xs:enumeration value="NAMED_ID_HIERARCHY"/>
+					<xs:enumeration value="NAMED_ID_HIERARCHY_LIST"/>
+					<xs:enumeration value="OBJECT"/>
+					<xs:enumeration value="OBJECT_LIST"/>
+					<xs:enumeration value="STRING"/>
+					<xs:enumeration value="STRING_LIST"/>
+				</xs:restriction>
+			</xs:simpleType>
+		
+			<xs:element name="ID" type="ID"/>
+			<xs:complexType name="ID">
+				<xs:attribute name="id" type="xs:long" use="optional"/>
+			</xs:complexType>
+		
+			<xs:element name="NamedID" type="NamedID"/>
+			<xs:complexType name="NamedID">
+				<xs:sequence>
+					<xs:element name="ID" type="ID" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="Name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		
+		    <xs:element name="NamedIDDelta" type="NamedIDDelta"/>
+		    <xs:complexType name="NamedIDDelta">
+		        <xs:complexContent>
+		            <xs:extension base="rnccm:NamedID">
+		                <xs:attribute name="action" type="ActionEnum" use="optional"/>
+		            </xs:extension>
+		        </xs:complexContent>
+		    </xs:complexType>
+		
+			<xs:element name="NamedIDHierarchy" type="NamedIDHierarchy"/>
+			<xs:complexType name="NamedIDHierarchy">
+				<xs:sequence>
+					<xs:element name="ID" type="ID" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="Name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="Parents" type="NamedReadOnlyID" minOccurs="0" maxOccurs="12"/>
+				</xs:sequence>
+			</xs:complexType>
+		
+		    <xs:element name="NamedReadOnlyID" type="NamedReadOnlyID"/>
+		    <xs:complexType name="NamedReadOnlyID">
+		        <xs:complexContent>
+		            <xs:extension base="rnccm:NamedID">
+		            </xs:extension>
+		        </xs:complexContent>
+		    </xs:complexType>
+		
+		    <!--  ============================== -->
+		    <!--    Chat Customer Information    -->
+		    <!--  ============================== -->
+		
+		    <xs:complexType name="ChatCustomerInformation">
+		        <xs:sequence>
+		            <xs:element name="EMailAddress" minOccurs="0" maxOccurs="1">
+		                <xs:simpleType>
+		                    <xs:restriction base="xs:string">
+		                        <xs:maxLength value="80"/>
+		                    </xs:restriction>
+		                </xs:simpleType>
+		            </xs:element>
+		
+		            <xs:element name="FirstName" minOccurs="0" maxOccurs="1">
+		                <xs:simpleType>
+		                    <xs:restriction base="xs:string">
+		                        <xs:maxLength value="80"/>
+		                    </xs:restriction>
+		                </xs:simpleType>
+		            </xs:element>
+		
+		            <xs:element name="LastName" minOccurs="0" maxOccurs="1">
+		                <xs:simpleType>
+		                    <xs:restriction base="xs:string">
+		                        <xs:maxLength value="80"/>
+		                    </xs:restriction>
+		                </xs:simpleType>
+		            </xs:element>
+		
+		            <xs:element name="InterfaceID" type="rnccm:NamedID" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="ContactID" type="rnccm:ID" minOccurs="0" maxOccurs="1" />
+		            <xs:element name="OrganizationID" type="rnccm:ID" minOccurs="0" maxOccurs="1" />
+		            <xs:element name="Question" type="xs:string" minOccurs="0" maxOccurs="1"/>
+		            <xs:element name="ProductID" type="rnccm:ID" minOccurs="0" maxOccurs="1"/>
+		            <xs:element name="CategoryID" type="rnccm:ID" minOccurs="0" maxOccurs="1"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		
+			<xs:element name="RNObject" type="RNObject"/>
+			<xs:complexType name="RNObject">
+				<xs:sequence>
+					<xs:element name="ID" type="ID" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="CreatedTime" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="UpdatedTime" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		
+			<xs:element name="RNObjectType" type="RNObjectType"/>
+			<xs:complexType name="RNObjectType">
+				<xs:sequence>
+					<xs:element name="Namespace" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+					<xs:element name="TypeName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		
+		    <xs:element name="GenericObject" type="GenericObject"/>
+		    <xs:complexType name="GenericObject">
+		        <xs:complexContent>
+		            <xs:extension base="rnccm:RNObject">
+		                <xs:sequence>
+		                    <xs:element name="ObjectType" type="RNObjectType" minOccurs="0" maxOccurs="1"/>
+		                    <xs:element name="GenericFields" type="GenericField" minOccurs="0" maxOccurs="unbounded"/>
+		                </xs:sequence>
+		            </xs:extension>
+		        </xs:complexContent>
+		    </xs:complexType>
+		
+			<xs:element name="GenericField" type="GenericField"/>
+			<xs:complexType name="GenericField">
+				<xs:sequence>
+					<xs:element name="DataValue" type="DataValue" minOccurs="1" maxOccurs="1" nillable="true"/>
+				</xs:sequence>
+				<xs:attribute name="dataType" type="DataTypeEnum" use="optional"/>
+				<xs:attribute name="name" type="xs:string" use="required"/>
+			</xs:complexType>
+		
+			<xs:element name="DataValue" type="DataValue"/>
+			<xs:complexType name="DataValue">
+				<xs:choice minOccurs="1" maxOccurs="1">
+					<xs:element name="Base64BinaryValue" type="xs:base64Binary" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="BooleanValue" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="BooleanValueList" type="xs:boolean" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="DateTimeValue" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="DateTimeValueList" type="xs:dateTime" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="DateValue" type="xs:date" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="DateValueList" type="xs:date" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="DecimalValue" type="xs:double" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="DecimalValueList" type="xs:double" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="IDValue" type="rnccm:ID" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="IDValueList" type="rnccm:ID" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="IntegerValue" type="xs:int" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="IntegerValueList" type="xs:int" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="LongValue" type="xs:long" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="LongValueList" type="xs:long" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="NamedIDDeltaValueList" type="rnccm:NamedIDDelta" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="NamedIDHierarchyValue" type="rnccm:NamedIDHierarchy" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="NamedIDHierarchyValueList" type="rnccm:NamedIDHierarchy" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="NamedIDValue" type="rnccm:NamedID" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="NamedIDValueList" type="rnccm:NamedID" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="ObjectValue" type="GenericObject" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="ObjectValueList" type="GenericObject" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="StringValue" type="xs:string" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="StringValueList" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:choice>
+			</xs:complexType>
+		
+		    <!--  ================================ -->
+		    <!--    Chat Error Occurred Message    -->
+		    <!--  ================================ -->
+								 
+		    <xs:complexType name="RNChatErrorOccurredMessage">
+		        <xs:sequence>
+		            <xs:element name="ErrorCode" type="xs:string" minOccurs="1" maxOccurs="1"/>
+		            <xs:element name="ErrorText" type="xs:string" minOccurs="1" maxOccurs="1"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		
+		    <!--  ====================================== -->
+		    <!--    Chat Configuration Changed Message   -->
+		    <!--  ====================================== -->
+								  
+		    <xs:complexType name="RNChatConfigurationChangedMessage">
+		        <xs:complexContent>
+		            <xs:extension base="rnccm:RNChatBaseSystemMessage">
+		                <xs:sequence>
+		                    <xs:element name="Name" type="rnccm:RNChatConfigurationChangedEnum" minOccurs="1" maxOccurs="1"/>
+		                    <xs:element name="Value" type="xs:string" minOccurs="1" maxOccurs="1"/>
+		                </xs:sequence>
+		            </xs:extension>
+		        </xs:complexContent>
+		    </xs:complexType>
+		
+		    <!--  ================================ -->
+		    <!--    RN Chat Base System Message   -->
+		    <!--  ================================ -->
+								  
+		    <xs:complexType name="RNChatBaseSystemMessage">
+		        <xs:sequence>
+		            <xs:element name="CreatedTime" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		
+		</xs:schema>
+
+
+		<xs:schema xmlns="urn:faults.chat.ws.rightnow.com/v1" 
+		           targetNamespace="urn:faults.chat.ws.rightnow.com/v1" 
+		           elementFormDefault="qualified" 
+		           attributeFormDefault="unqualified" version="1.0">
+		    
+		    <xs:complexType name="RNFault">
+		        <xs:sequence>
+		            <xs:element name="exceptionCode"    type="ExceptionCode"/>
+		            <xs:element name="exceptionMessage" type="xs:string"/>
+		        </xs:sequence>
+		    </xs:complexType>
+		
+		    <xs:element name="RequestErrorFault" type="RequestErrorFaultType"/>
+		    <xs:complexType name="RequestErrorFaultType">
+		        <xs:complexContent>
+		            <xs:extension base="RNFault"/>
+		        </xs:complexContent>
+		    </xs:complexType>
+		    
+		    <xs:element name="ServerErrorFault" type="ServerErrorFaultType"/>
+		    <xs:complexType name="ServerErrorFaultType">
+		        <xs:complexContent>
+		            <xs:extension base="RNFault"/>
+		        </xs:complexContent>
+		    </xs:complexType>
+		    
+		    <xs:element name="UnexpectedErrorFault" type="UnexpectedErrorFaultType"/>
+		    <xs:complexType name="UnexpectedErrorFaultType">
+		        <xs:complexContent>
+		            <xs:extension base="RNFault"/>
+		        </xs:complexContent>
+		    </xs:complexType>
+		
+		    <xs:element name="InvalidURLFault" type="InvalidURLFaultType"/>
+		    <xs:complexType name="InvalidURLFaultType">
+		        <xs:complexContent>
+		            <xs:extension base="RNFault"/>
+		        </xs:complexContent>
+		    </xs:complexType>
+		    
+		    <xs:simpleType name="ExceptionCode">
+		        <xs:restriction base="xs:string">
+		            <xs:enumeration value="ACCESS_DENIED"/>
+		            <xs:enumeration value="INVALID_FIELD"/>
+		            <xs:enumeration value="INVALID_LOGIN"/>
+		            <xs:enumeration value="BAD_ID"/>
+		            <xs:enumeration value="MISSING_ARGUMENT"/>
+		            <xs:enumeration value="QUERY_TIMEOUT"/>
+		            <xs:enumeration value="UNKNOWN_EXCEPTION"/>
+		
+		
+		            <!--  Invalid URL Error - Used only by the InvalidURLFaultType  -->
+		
+		            <xs:enumeration value="INVALID_URL"/>
+		
+		            <!--  System Level Errors  -->
+		         
+		            <xs:enumeration value="BAD_REQUEST"/>
+		            <xs:enumeration value="CONFLICT"/>
+		            <xs:enumeration value="FEATURE_NOT_IMPLEMENTED"/>
+		            <xs:enumeration value="FORBIDDEN"/>
+		            <xs:enumeration value="INTERNAL_SERVER_ERROR"/>
+		            <xs:enumeration value="ITEM_NOT_FOUND"/>
+		            <xs:enumeration value="NOT_ACCEPTABLE"/>
+		            <xs:enumeration value="NOT_ALLOWED"/>
+		            <xs:enumeration value="NOT_AUTHORIZED"/>
+		            <xs:enumeration value="RECIPIENT_UNAVAILABLE"/>
+		            <xs:enumeration value="RESOURCE_CONSTRAINT"/>
+		            <xs:enumeration value="SERVICE_UNAVAILABLE"/>
+		            <xs:enumeration value="UNDEFINED_CONDITION"/>
+		            <xs:enumeration value="UNEXPECTED_REQUEST"/>
+		            <xs:enumeration value="SECURITY_TOKEN_MISMATCH"/>
+		
+		            <!-- Chat Request Errors  -->
+		         
+		            <xs:enumeration value="NO_AGENTS_AVAIL"/>
+		            <xs:enumeration value="OUT_OF_HOURS"/>
+		            <xs:enumeration value="HOLIDAY"/>
+		            <xs:enumeration value="SERVER_ERROR"/>
+		            <xs:enumeration value="RULE_DEQUEUE"/>
+		            <xs:enumeration value="EXISTING_SESSION"/>
+		            <xs:enumeration value="INVALID_SITE_NAME"/>
+		            <xs:enumeration value="INVALID_INTERFACE_ID"/>
+		
+		            <xs:enumeration value="MISSING_CUSTOMER_INFORMATION"/>
+		            <xs:enumeration value="MISSING_INTERFACE_ID"/>
+		            <xs:enumeration value="MISSING_RESUME_TYPE"/>
+		            <xs:enumeration value="MISSING_MESSAGE_BODY"/>
+		            <xs:enumeration value="MISSING_CONCLUSION_REASON"/>
+		        </xs:restriction>
+		    </xs:simpleType>
+		
+		</xs:schema>
+
+
+    </wsdl:types>
+
+    <wsdl:message name="RNFault">
+        <wsdl:part name="fault" type="rncft:RNFault"/>
+    </wsdl:message>
+
+    <wsdl:message name="RequestErrorFault">
+        <wsdl:part name="fault" element="rncft:RequestErrorFault" />
+    </wsdl:message>
+
+    <wsdl:message name="ServerErrorFault">
+        <wsdl:part name="fault" element="rncft:ServerErrorFault" />
+    </wsdl:message>
+
+    <wsdl:message name="UnexpectedErrorFault">
+        <wsdl:part name="fault" element="rncft:UnexpectedErrorFault" />
+    </wsdl:message>
+
+    <wsdl:message name="InvalidURLFault">
+        <wsdl:part name="fault" element="rncft:InvalidURLFault" />
+    </wsdl:message>
+
+    <wsdl:message name="ChatClientInfoHeader">
+        <wsdl:part element="rnccm:ChatClientInfoHeader" name="request_header" />
+    </wsdl:message>
+
+    <wsdl:message name="RequestChatRequest">
+        <wsdl:part element="rnceum:RequestChat" name="parameters" />
+    </wsdl:message>
+
+    <wsdl:message name="RequestChatResponse">
+        <wsdl:part element="rnceum:RequestChatResponse" name="parameters" />
+    </wsdl:message>
+
+    <wsdl:message name="TerminateChatRequest">
+        <wsdl:part element="rnceum:TerminateChat" name="parameters" />
+    </wsdl:message>
+
+    <wsdl:message name="TerminateChatResponse">
+        <wsdl:part element="rnceum:TerminateChatResponse" name="parameters" />
+    </wsdl:message>
+
+    <wsdl:message name="PostChatMessageRequest">
+        <wsdl:part element="rnceum:PostChatMessage" name="parameters" />
+    </wsdl:message>
+
+    <wsdl:message name="PostChatMessageResponse">
+        <wsdl:part element="rnceum:PostChatMessageResponse" name="parameters" />
+    </wsdl:message>
+
+    <wsdl:message name="RetrieveMessagesRequest">
+        <wsdl:part element="rnceum:RetrieveMessages" name="parameters" />
+    </wsdl:message>
+
+    <wsdl:message name="RetrieveMessagesResponse">
+        <wsdl:part element="rnceum:RetrieveMessagesResponse" name="parameters" />
+    </wsdl:message>
+
+    <wsdl:message name="SendActivityChangeRequest">
+        <wsdl:part element="rnceum:SendActivityChange" name="parameters" />
+    </wsdl:message>
+
+    <wsdl:message name="SendActivityChangeResponse">
+        <wsdl:part element="rnceum:SendActivityChangeResponse" name="parameters" />
+    </wsdl:message>
+
+    <wsdl:portType name="WSChatEndUserPortType">
+
+        <wsdl:operation name="RequestChat">
+            <wsdl:input message="rnceuws:RequestChatRequest" />
+            <wsdl:output message="rnceuws:RequestChatResponse" />
+            <wsdl:fault message="rnceuws:RequestErrorFault" name="RequestErrorFault"/>
+            <wsdl:fault message="rnceuws:ServerErrorFault" name="ServerErrorFault"/>
+            <wsdl:fault message="rnceuws:UnexpectedErrorFault" name="UnexpectedErrorFault"/>
+            <wsdl:fault message="rnceuws:InvalidURLFault" name="InvalidURLFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="TerminateChat">
+            <wsdl:input message="rnceuws:TerminateChatRequest" />
+            <wsdl:output message="rnceuws:TerminateChatResponse" />
+            <wsdl:fault message="rnceuws:RequestErrorFault" name="RequestErrorFault"/>
+            <wsdl:fault message="rnceuws:ServerErrorFault" name="ServerErrorFault"/>
+            <wsdl:fault message="rnceuws:UnexpectedErrorFault" name="UnexpectedErrorFault"/>
+            <wsdl:fault message="rnceuws:InvalidURLFault" name="InvalidURLFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="PostChatMessage">
+            <wsdl:input message="rnceuws:PostChatMessageRequest" />
+            <wsdl:output message="rnceuws:PostChatMessageResponse" />
+            <wsdl:fault message="rnceuws:RequestErrorFault" name="RequestErrorFault"/>
+            <wsdl:fault message="rnceuws:ServerErrorFault" name="ServerErrorFault"/>
+            <wsdl:fault message="rnceuws:UnexpectedErrorFault" name="UnexpectedErrorFault"/>
+            <wsdl:fault message="rnceuws:InvalidURLFault" name="InvalidURLFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="RetrieveMessages">
+            <wsdl:input message="rnceuws:RetrieveMessagesRequest" />
+            <wsdl:output message="rnceuws:RetrieveMessagesResponse" />
+            <wsdl:fault message="rnceuws:RequestErrorFault" name="RequestErrorFault"/>
+            <wsdl:fault message="rnceuws:ServerErrorFault" name="ServerErrorFault"/>
+            <wsdl:fault message="rnceuws:UnexpectedErrorFault" name="UnexpectedErrorFault"/>
+            <wsdl:fault message="rnceuws:InvalidURLFault" name="InvalidURLFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="SendActivityChange">
+            <wsdl:input message="rnceuws:SendActivityChangeRequest" />
+            <wsdl:output message="rnceuws:SendActivityChangeResponse" />
+            <wsdl:fault message="rnceuws:RequestErrorFault" name="RequestErrorFault"/>
+            <wsdl:fault message="rnceuws:ServerErrorFault" name="ServerErrorFault"/>
+            <wsdl:fault message="rnceuws:UnexpectedErrorFault" name="UnexpectedErrorFault"/>
+            <wsdl:fault message="rnceuws:InvalidURLFault" name="InvalidURLFault"/>
+        </wsdl:operation>
+
+    </wsdl:portType>
+
+    <wsdl:binding name="WSChatEndUserBinding" type="rnceuws:WSChatEndUserPortType">
+        <wsp:PolicyReference URI="#SyncPolicy" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"/>
+        <soap:binding style="document"
+            transport="http://schemas.xmlsoap.org/soap/http" />
+
+        <wsdl:operation name="RequestChat">
+            <soap:operation soapAction="RequestChat" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <soap:header message="rnceuws:ChatClientInfoHeader" part="request_header" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="RequestErrorFault">
+                <soap:fault name="RequestErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="ServerErrorFault">
+                <soap:fault name="ServerErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="UnexpectedErrorFault">
+                <soap:fault name="UnexpectedErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="InvalidURLFault">
+                <soap:fault name="InvalidURLFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="TerminateChat">
+            <soap:operation soapAction="TerminateChat" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <soap:header message="rnceuws:ChatClientInfoHeader" part="request_header" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="RequestErrorFault">
+                <soap:fault name="RequestErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="ServerErrorFault">
+                <soap:fault name="ServerErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="UnexpectedErrorFault">
+                <soap:fault name="UnexpectedErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="InvalidURLFault">
+                <soap:fault name="InvalidURLFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="PostChatMessage">
+            <soap:operation soapAction="PostChatMessage" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <soap:header message="rnceuws:ChatClientInfoHeader" part="request_header" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="RequestErrorFault">
+                <soap:fault name="RequestErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="ServerErrorFault">
+                <soap:fault name="ServerErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="UnexpectedErrorFault">
+                <soap:fault name="UnexpectedErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="InvalidURLFault">
+                <soap:fault name="InvalidURLFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="RetrieveMessages">
+            <soap:operation soapAction="RetrieveMessages" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <soap:header message="rnceuws:ChatClientInfoHeader" part="request_header" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="RequestErrorFault">
+                <soap:fault name="RequestErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="ServerErrorFault">
+                <soap:fault name="ServerErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="UnexpectedErrorFault">
+                <soap:fault name="UnexpectedErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="InvalidURLFault">
+                <soap:fault name="InvalidURLFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="SendActivityChange">
+            <soap:operation soapAction="SendActivityChange" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+                <soap:header message="rnceuws:ChatClientInfoHeader" part="request_header" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="RequestErrorFault">
+                <soap:fault name="RequestErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="ServerErrorFault">
+                <soap:fault name="ServerErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="UnexpectedErrorFault">
+                <soap:fault name="UnexpectedErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="InvalidURLFault">
+                <soap:fault name="InvalidURLFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+
+    </wsdl:binding>
+
+    <wsdl:service name="WSChatEndUserService">
+        <wsdl:port name="WSChatEndUserPort" binding="rnceuws:WSChatEndUserBinding">
+            <soap:address location="https://opn-wipro-highered.rightnowdemo.com/cgi-bin/myinterface.cfg/services/chat_soap"/>       
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions> 

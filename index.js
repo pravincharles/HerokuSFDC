@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const request = require('request')
 const app = express()
 
+let idEnquired = false;
 app.set('port', (process.env.PORT || 5000))
 
 // Process application/x-www-form-urlencoded
@@ -15,7 +16,14 @@ app.use(bodyParser.json())
 
 // Index route
 app.get('/', function (req, res) {
+    
     res.send('Hello world, I am a chat bot')
+})
+
+app.get('/fetchAccounts', function (req, res) {
+    fetchAccounts(function(returnValue) {
+        res.send(returnValue);
+    });
 })
 
 // for Facebook verification
@@ -52,14 +60,19 @@ app.post('/webhook/', function (req, res) {
 	        	// sendTextMessage(sender, "You have selected "+text.substring(0, 200), token)
 
 	        if(payloadData == 'BROADBAND_POSTBACK'){
-	        	sendTextMessage(sender, "Please enter your Broadband Customer ID", token)
-
+	        	sendTextMessage(sender, "Please enter your Broadband Customer ID", token);
+                idEnquired = true;
 	        } else if(payloadData == 'POSTPAID_POSTBACK'){
-	        	sendTextMessage(sender, "Please enter your MSISDN", token)
+	        	sendTextMessage(sender, "Please enter your MSISDN", token);
+                idEnquired = true;
 	        } else if(payloadData == 'PLANCHANGE_POSTBACK'){
 	        	// sendTextMessage(sender, "Please enter your MSISDN", token)
 	        	sendPlanOptionsMessage(sender);
-	        } else if(payloadData == 'SUBSCRIBE_SMART_20'){
+	        } else if (!isNaN(payloadData)){
+                if(idEnquired){
+
+                }
+            } else if(payloadData == 'SUBSCRIBE_SMART_20'){
 	        	sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 20 Plan", token)
 	        } else if(payloadData == 'SUBSCRIBE_SMART_25'){
 	        	sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 25 Plan", token)
@@ -67,7 +80,7 @@ app.post('/webhook/', function (req, res) {
 	        	sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 30 Plan", token)
 	        } else if(payloadData == 'SUBSCRIBE_PLATINUM_50'){
 	        	sendTextMessage(sender, "Successfully subscribed to Platinum 50 Plan", token)
-	        }
+	        } 
 	        continue
 	      }
     }
@@ -193,6 +206,38 @@ function sendPlanOptionsMessage(sender) {
     })
 }
 
+function fetchAccounts(callback){
+
+    console.log('fetchAccounts');
+
+    request({
+            url: 'https://ap1.salesforce.com/services/data/v20.0/query/?q=SELECT id,name,accountnumber from Account',
+            method: 'GET',
+            headers: {
+                'Authorization' : 'Bearer 00D90000000w7KR!AR0AQEsz2S3bKib1bV76cOFYyHV4oVDNeXPBOX1sc0c6_PLgazaPmt63gXpDGinYaskd3kk46l1nKTJmqryC4QZ3ZmNwvXeP',
+                'Content-Type'  : 'application/json'
+            }
+        }, function(error, response, body) {
+
+            console.log('response for fetchAccounts received');
+            // console.log(response);
+            console.log(body);
+            if (error) {
+                console.log('Error fetchAccounts : ', error)
+                // return error;
+                callback(error);
+            } else if (response.body.error) {
+                console.log('Error: ', response.body.error);
+                callback(response.body.error);
+                // return response.body.error;
+            } else {
+                console.log(response.body);
+                callback(response.body);
+                // sendTextMessage(sender, "Text received, echo: " + response.body)
+            }
+        })
+}
+
 function sendButtonEnquiry(sender) {
     let messageData = {
         "attachment":{
@@ -280,10 +325,10 @@ function respondToQuery(sender,text){
 	}
 }
 
-// app.get('/invokeNLP/', function (req, res) {
-//     console.log('request received');
-//     invokeNLP();
-// })
+app.get('/invokeNLP', function (req, res) {
+    console.log('invokeNLP request received');
+    invokeNLP();
+})
 
 
 
