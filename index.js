@@ -72,7 +72,8 @@ app.post('/webhook/', function (req, res) {
                             createCase(id,name,function(returnVal){
                                 var caseObj = JSON.parse(returnVal);
                                 caseId = caseObj.id;
-                                postChatter(caseId,name+' Selected Postpaid');
+                                var postText = ' '+name+' Selected Postpaid';
+                                postChatter(caseId,postText);
                                 sendButtonEnquiry(name,sender);
                             })
 
@@ -336,11 +337,11 @@ function postChatter(caseid,comment){
             json: postData
         }, function(error, response, body) {
 
-            console.log('response for createCase received');
+            console.log('response for postChatter received');
             // console.log(response);
             console.log(body);
             if (error) {
-                console.log('Error createCase : ', error)
+                console.log('Error postChatter : ', error)
                 // return error;
                 // callback(error);
             } else if (response.body.error) {
