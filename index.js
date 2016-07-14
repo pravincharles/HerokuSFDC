@@ -6,8 +6,8 @@ const request = require('request')
 const app = express()
 
 let idEnquired = false;
-var caseId = '';
-var access_token = '00D90000000w7KR!AR0AQH7s1juYpuKBXmBF2Xs8XTnIu20JBVIapxLfMKBAPso3s7eIlH9M3v_HOHoOSSHgQBOtxRyFXT3bFYklcCd2dCkZDbf7';
+let caseId= '';
+let access_token = '00D90000000w7KR!AR0AQH7s1juYpuKBXmBF2Xs8XTnIu20JBVIapxLfMKBAPso3s7eIlH9M3v_HOHoOSSHgQBOtxRyFXT3bFYklcCd2dCkZDbf7';
 app.set('port', (process.env.PORT || 5000))
 
 // Process application/x-www-form-urlencoded
@@ -70,6 +70,7 @@ app.post('/webhook/', function (req, res) {
                             console.log(name,id);
 
                             createCase(id,name,function(returnVal){
+                                console.log(' Line 73. '+returnVal)
                                 var caseObj = JSON.parse(returnVal);
                                 caseId = caseObj.id;
                                 var postText = ' '+name+' Selected Postpaid';
@@ -304,8 +305,8 @@ function createCase(id,name,callback){
                 callback(response.body.error);
                 // return response.body.error;
             } else {
-                console.log(response.body);
-                callback(response.body);
+                console.log(body);
+                callback(body);
                 // sendTextMessage(sender, "Text received, echo: " + response.body)
             }
         })
