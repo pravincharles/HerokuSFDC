@@ -55,7 +55,7 @@ app.post('/webhook/', function (req, res) {
             if (!isNaN(text)){
                 if(idEnquired){
 
-                    fetchAccounts(payloadData,function(returnValue) {
+                    fetchAccounts(text,function(returnValue) {
                         idEnquired = false;
                         let name =  returnValue.record[0].Name;
                         // res.send("Hi "+returnValue.record[0].Name);
