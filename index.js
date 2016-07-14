@@ -56,13 +56,25 @@ app.post('/webhook/', function (req, res) {
                 if(idEnquired){
 
                     fetchAccounts(text,function(returnValue) {
-                        idEnquired = false;
-                        console.log(returnValue);
+
                         var obj = JSON.parse(returnValue);
-                        var name =  obj.records[0].attributes.Name;
-                        // res.send("Hi "+returnValue.record[0].Name);
-                        console.log(name);
-                        sendButtonEnquiry(name,sender);
+                        if(obj.totalSize >0 ){
+                            idEnquired = false;
+                            console.log(returnValue);
+                            
+                            var name =  obj.records[0].Name;
+                            var id = obj.records[0].Id;
+                            // res.send("Hi "+returnValue.record[0].Name);
+                            console.log(name,id);
+
+                            createCase(id,name,function(returnVal){
+                                sendButtonEnquiry(name,sender);
+                            })
+
+                        } else {
+                            sendTextMessage(sender, "Please enter a valid MSISDN #", token);
+                            idEnquired = true;
+                        }
                     });
 
                 }
@@ -78,7 +90,7 @@ app.post('/webhook/', function (req, res) {
 	        	sendTextMessage(sender, "Please enter your Broadband Customer ID", token);
                 idEnquired = true;
 	        } else if(payloadData == 'POSTPAID_POSTBACK'){
-	        	sendTextMessage(sender, "Please enter your MSISDN", token);
+	        	sendTextMessage(sender, "Please enter your MSISDN #", token);
                 idEnquired = true;
 	        } else if(payloadData == 'PLANCHANGE_POSTBACK'){
 	        	// sendTextMessage(sender, "Please enter your MSISDN", token)
@@ -235,6 +247,50 @@ function fetchAccounts(payloadData,callback){
             console.log(body);
             if (error) {
                 console.log('Error fetchAccounts : ', error)
+                // return error;
+                callback(error);
+            } else if (response.body.error) {
+                console.log('Error: ', response.body.error);
+                callback(response.body.error);
+                // return response.body.error;
+            } else {
+                console.log(response.body);
+                callback(response.body);
+                // sendTextMessage(sender, "Text received, echo: " + response.body)
+            }
+        })
+}
+
+
+function createCase(id,name,callback){
+
+    console.log('createCase');
+
+    var postData = {
+                  "Type": "Other",
+                  "Status": "New",
+                  "Reason": "Other",
+                  "Origin": "Web",
+                  "Subject": name+" Facebook Touch",
+                  "Priority": "Low",
+                  "AccountId":id    
+                };
+
+    request({
+            url: "https://ap1.salesforce.com/services/data/v20.0/sobjects/Case",
+            method: 'POST',
+            headers: {
+                'Authorization' : 'Bearer 00D90000000w7KR!AR0AQEsz2S3bKib1bV76cOFYyHV4oVDNeXPBOX1sc0c6_PLgazaPmt63gXpDGinYaskd3kk46l1nKTJmqryC4QZ3ZmNwvXeP',
+                'Content-Type'  : 'application/json'
+            },
+            json: postData
+        }, function(error, response, body) {
+
+            console.log('response for createCase received');
+            // console.log(response);
+            console.log(body);
+            if (error) {
+                console.log('Error createCase : ', error)
                 // return error;
                 callback(error);
             } else if (response.body.error) {
