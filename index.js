@@ -377,9 +377,10 @@ function postChatter(caseid,comment){
                 console.log('Error Feed elements : ', error)
             } else {
                 console.log('Chatter Feed elements retrieved');
-                console.log(body.elements[0].id);
-                var feedElementID =  body.elements[0].id;
-
+                var feedObj = JSON.parse(body);
+                console.log(feedObj);
+                var feedElementID =  feedObj.elements[0].id;
+                console.log(feedElementID);
 
                 var postData = {
                        "body":{
@@ -408,7 +409,7 @@ function postChatter(caseid,comment){
                             console.log('Error comment add : ', error)
                         } else {
                             console.log('Chatter Feed elements retrieved');
-                            console.log(body.elements[0].id);
+                            // console.log(body.elements[0].id);
                             
                         }
                     })
