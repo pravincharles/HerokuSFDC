@@ -57,7 +57,7 @@ app.post('/webhook/', function (req, res) {
 
                     fetchAccounts(text,function(returnValue) {
                         idEnquired = false;
-                        let name =  returnValue.records[0].Name;
+                        let name =  returnValue.records[0].attributes.Name;
                         // res.send("Hi "+returnValue.record[0].Name);
                         console.log(name);
                         sendButtonEnquiry(name,sender);
