@@ -69,14 +69,59 @@ app.post('/webhook/', function (req, res) {
                             // res.send("Hi "+returnValue.record[0].Name);
                             console.log(name,id);
 
-                            createCase(id,name,function(returnVal){
-                                console.log(' Line 73. '+returnVal)
-                                var caseObj = JSON.parse(returnVal);
-                                caseId = caseObj.id;
-                                var postText = ' '+name+' Selected Postpaid';
-                                postChatter(caseId,postText);
-                                sendButtonEnquiry(name,sender);
-                            })
+                            // createCase(id,name,function(returnVal){
+                            //     console.log(' Line 73. '+returnVal)
+                            //     var caseObj = JSON.parse(returnVal);
+                            //     caseId = caseObj.id;
+                            //     var postText = ' '+name+' Selected Postpaid';
+                            //     postChatter(caseId,postText);
+                            //     sendButtonEnquiry(name,sender);
+                            // })
+                            console.log('createCase');
+
+                            var postData = {
+                                          "Type": "Other",
+                                          "Status": "New",
+                                          "Reason": "Other",
+                                          "Origin": "Web",
+                                          "Subject": name+" Facebook Touch",
+                                          "Priority": "Low",
+                                          "AccountId":id    
+                                        };
+
+                            request({
+                                    url: "https://ap1.salesforce.com/services/data/v20.0/sobjects/Case",
+                                    method: 'POST',
+                                    headers: {
+                                        'Authorization' : 'Bearer '+access_token,
+                                        'Content-Type'  : 'application/json'
+                                    },
+                                    json: postData
+                                }, function(error, response, body) {
+
+                                    console.log('response for createCase received');
+                                    // console.log(response);
+                                    // console.log(body);
+                                    if (error) {
+                                        console.log('Error createCase : ', error)
+                                        // return error;
+                                        // callback(error);
+                                    } else if (response.body.error) {
+                                        console.log('Error: ', response.body.error);
+                                        // callback(response.body.error);
+                                        // return response.body.error;
+                                    } else {
+                                        // console.log(body);
+                                        // callback(body);
+                                        // sendTextMessage(sender, "Text received, echo: " + response.body)
+                                        console.log(' Line 117. '+body)
+                                        var caseObj = JSON.parse(body);
+                                        caseId = caseObj.id;
+                                        var postText = ' '+name+' Selected Postpaid';
+                                        postChatter(caseId,postText);
+                                        sendButtonEnquiry(name,sender);
+                                    }
+                                })
 
                         } else {
                             sendTextMessage(sender, "Please enter a valid MSISDN #", token);
@@ -295,7 +340,7 @@ function createCase(id,name,callback){
 
             console.log('response for createCase received');
             // console.log(response);
-            console.log(body);
+            // console.log(body);
             if (error) {
                 console.log('Error createCase : ', error)
                 // return error;
