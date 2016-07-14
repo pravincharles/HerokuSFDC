@@ -361,7 +361,27 @@ function postChatter(caseid,comment){
 
     console.log('postChatter');
 
-    var postData = {
+    request({
+            url: 'https://ap1.salesforce.com/services/data/v37.0/chatter/feeds/record/'+caseid+'/feed-elements'
+            // url: 'https://ap1.salesforce.com/services/data/v37.0/chatter/feed-elements/'+caseid+'/capabilities/comments/items',
+            method: 'GET',
+            headers: {
+                'Authorization' : 'Bearer '+access_token,
+                'Content-Type'  : 'application/json'
+            }
+        }, function(error, response, body) {
+
+            console.log('response for Feed elements received');
+            console.log(body);
+            if (error) {
+                console.log('Error Feed elements : ', error)
+            } else {
+                console.log('Chatter Feed elements retrieved');
+                console.log(body.elements[0].id);
+                var feedElementID =  body.elements[0].id;
+
+
+                var postData = {
                        "body":{
                           "messageSegments":[
                              {
@@ -371,35 +391,28 @@ function postChatter(caseid,comment){
                           ]
                        }
                     }
+                request({
 
+                        url: 'https://ap1.salesforce.com/services/data/v37.0/chatter/feed-elements/'+feedElementID+'/capabilities/comments/items',
+                        method: 'POST',
+                        headers: {
+                            'Authorization' : 'Bearer '+access_token,
+                            'Content-Type'  : 'application/json'
+                        },
+                        json: postData
+                    }, function(error, response, body) {
 
-    request({
-            url: 'https://ap1.salesforce.com/services/data/v37.0/chatter/feed-elements/'+caseid+'/capabilities/comments/items',
-            method: 'POST',
-            headers: {
-                'Authorization' : 'Bearer '+access_token,
-                'Content-Type'  : 'application/json'
-            },
-            json: postData
-        }, function(error, response, body) {
-
-            console.log('response for postChatter received');
-            // console.log(response);
-            console.log(body);
-            if (error) {
-                console.log('Error postChatter : ', error)
-                // return error;
-                // callback(error);
-            } else if (response.body.error) {
-                console.log('Error: ', response.body.error);
-                // callback(response.body.error);
-                // return response.body.error;
-            } 
-            else {
-                console.log('Chatter Successfully ')
-                // console.log(response.body);
-                // callback(response.body);
-                // sendTextMessage(sender, "Text received, echo: " + response.body)
+                        console.log('response for comment add received');
+                        console.log(body);
+                        if (error) {
+                            console.log('Error comment add : ', error)
+                        } else {
+                            console.log('Chatter Feed elements retrieved');
+                            console.log(body.elements[0].id);
+                            
+                        }
+                    })
+                
             }
         })
 }
