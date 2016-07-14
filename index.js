@@ -145,15 +145,20 @@ app.post('/webhook/', function (req, res) {
 	        	sendTextMessage(sender, "Please enter your MSISDN #", token);
                 idEnquired = true;
 	        } else if(payloadData == 'PLANCHANGE_POSTBACK'){
+                postChatter(caseId,'Selected Plan Change');
 	        	// sendTextMessage(sender, "Please enter your MSISDN", token)
 	        	sendPlanOptionsMessage(sender);
 	        }  else if(payloadData == 'SUBSCRIBE_SMART_20'){
+                postChatter(caseId,'Added Product "SUBSCRIBE_SMART_20"');
 	        	sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 20 Plan", token)
 	        } else if(payloadData == 'SUBSCRIBE_SMART_25'){
+                postChatter(caseId,'Added Product "SUBSCRIBE_SMART_25"');
 	        	sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 25 Plan", token)
 	        } else if(payloadData == 'SUBSCRIBE_SMART_30'){
+                postChatter(caseId,'Added Product "SUBSCRIBE_SMART_30"');
 	        	sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 30 Plan", token)
 	        } else if(payloadData == 'SUBSCRIBE_PLATINUM_50'){
+                postChatter(caseId,'Added Product "SUBSCRIBE_PLATINUM_50"');
 	        	sendTextMessage(sender, "Successfully subscribed to Platinum 50 Plan", token)
 	        } 
 	        continue
