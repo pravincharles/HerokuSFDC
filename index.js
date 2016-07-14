@@ -151,7 +151,7 @@ app.post('/webhook/', function (req, res) {
 	        }  else if(payloadData == 'SUBSCRIBE_SMART_20'){
                 postChatter(caseId,'Added Product "SUBSCRIBE_SMART_20"');
 
-                fetchCaseId(text,function(returnValue) {
+                fetchCaseId(caseId,function(returnValue) {
 
                     var obj = JSON.parse(returnValue);
                     var caseNum =  obj.records[0].CaseNumber;
@@ -160,16 +160,16 @@ app.post('/webhook/', function (req, res) {
                 })
 	        } else if(payloadData == 'SUBSCRIBE_SMART_25'){
                 postChatter(caseId,'Added Product "SUBSCRIBE_SMART_25"');
-                fetchCaseId(text,function(returnValue) {
+                fetchCaseId(caseId,function(returnValue) {
 
-                    var obj = JSON.parse(returnValue);
-                    var caseNum =  obj.records[0].CaseNumber;
+                var obj = JSON.parse(returnValue);
+                var caseNum =  obj.records[0].CaseNumber;
                   sendTextMessage(sender, "Successfully subscribed to Unlimited Smart 25 Plan.", token)
                   sendTextMessage(sender, "Please use the Service Request Number : "+caseNum+" for future correspondence", token);
                 })
 	        } else if(payloadData == 'SUBSCRIBE_SMART_30'){
                 postChatter(caseId,'Added Product "SUBSCRIBE_SMART_30"');
-                fetchCaseId(text,function(returnValue) {
+                fetchCaseId(caseId,function(returnValue) {
 
                     var obj = JSON.parse(returnValue);
                     var caseNum =  obj.records[0].CaseNumber;
@@ -178,7 +178,7 @@ app.post('/webhook/', function (req, res) {
                 })
 	        } else if(payloadData == 'SUBSCRIBE_PLATINUM_50'){
                 postChatter(caseId,'Added Product "SUBSCRIBE_PLATINUM_50"');
-                fetchCaseId(text,function(returnValue) {
+                fetchCaseId(caseId,function(returnValue) {
 
                     var obj = JSON.parse(returnValue);
                     var caseNum =  obj.records[0].CaseNumber;
