@@ -6,6 +6,8 @@ const request = require('request')
 const app = express()
 
 let idEnquired = false;
+var caseId = '';
+var access_token = '00D90000000w7KR!AR0AQH7s1juYpuKBXmBF2Xs8XTnIu20JBVIapxLfMKBAPso3s7eIlH9M3v_HOHoOSSHgQBOtxRyFXT3bFYklcCd2dCkZDbf7';
 app.set('port', (process.env.PORT || 5000))
 
 // Process application/x-www-form-urlencoded
@@ -68,6 +70,9 @@ app.post('/webhook/', function (req, res) {
                             console.log(name,id);
 
                             createCase(id,name,function(returnVal){
+                                var caseObj = JSON.parse(returnVal);
+                                caseId = caseObj.id;
+                                postChatter(caseId,name+' Selected Postpaid');
                                 sendButtonEnquiry(name,sender);
                             })
 
@@ -237,7 +242,7 @@ function fetchAccounts(payloadData,callback){
             url: "https://ap1.salesforce.com/services/data/v20.0/query/?q=SELECT id,name,accountnumber from Account+WHERE+accountnumber+=+'"+payloadData+"'",
             method: 'GET',
             headers: {
-                'Authorization' : 'Bearer 00D90000000w7KR!AR0AQEsz2S3bKib1bV76cOFYyHV4oVDNeXPBOX1sc0c6_PLgazaPmt63gXpDGinYaskd3kk46l1nKTJmqryC4QZ3ZmNwvXeP',
+                'Authorization' : 'Bearer '+access_token,
                 'Content-Type'  : 'application/json'
             }
         }, function(error, response, body) {
@@ -280,7 +285,7 @@ function createCase(id,name,callback){
             url: "https://ap1.salesforce.com/services/data/v20.0/sobjects/Case",
             method: 'POST',
             headers: {
-                'Authorization' : 'Bearer 00D90000000w7KR!AR0AQEsz2S3bKib1bV76cOFYyHV4oVDNeXPBOX1sc0c6_PLgazaPmt63gXpDGinYaskd3kk46l1nKTJmqryC4QZ3ZmNwvXeP',
+                'Authorization' : 'Bearer '+access_token,
                 'Content-Type'  : 'application/json'
             },
             json: postData
@@ -300,6 +305,51 @@ function createCase(id,name,callback){
             } else {
                 console.log(response.body);
                 callback(response.body);
+                // sendTextMessage(sender, "Text received, echo: " + response.body)
+            }
+        })
+}
+
+function postChatter(caseid,comment){
+
+    console.log('postChatter');
+
+    var postData = {
+                       "body":{
+                          "messageSegments":[
+                             {
+                                "type":"Text",
+                                "text":comment
+                             }
+                          ]
+                       }
+                    }
+
+
+    request({
+            url: "https://ap1.salesforce.com/services/data/v37.0/chatter/feed-elements/"+caseid+"/capabilities/comments/items",
+            method: 'POST',
+            headers: {
+                'Authorization' : 'Bearer '+access_token,
+                'Content-Type'  : 'application/json'
+            },
+            json: postData
+        }, function(error, response, body) {
+
+            console.log('response for createCase received');
+            // console.log(response);
+            console.log(body);
+            if (error) {
+                console.log('Error createCase : ', error)
+                // return error;
+                // callback(error);
+            } else if (response.body.error) {
+                console.log('Error: ', response.body.error);
+                // callback(response.body.error);
+                // return response.body.error;
+            } else {
+                console.log(response.body);
+                // callback(response.body);
                 // sendTextMessage(sender, "Text received, echo: " + response.body)
             }
         })
