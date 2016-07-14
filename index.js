@@ -115,8 +115,8 @@ app.post('/webhook/', function (req, res) {
                                         // callback(body);
                                         // sendTextMessage(sender, "Text received, echo: " + response.body)
                                         console.log(' Line 117. '+body)
-                                        var caseObj = JSON.parse(body);
-                                        caseId = caseObj.id;
+                                        // var caseObj = JSON.parse(body);
+                                        caseId = body.id;
                                         var postText = ' '+name+' Selected Postpaid';
                                         postChatter(caseId,postText);
                                         sendButtonEnquiry(name,sender);
